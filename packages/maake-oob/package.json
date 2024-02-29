@@ -1,0 +1,100 @@
+{
+  "name": "@wnfs-wg/nest",
+  "type": "module",
+  "version": "0.1.0",
+  "description": "A utility layer around the `wnfs` package.",
+  "author": "Steven Vandevelde <icid.asset@gmail.com> (tokono.ma)",
+  "license": "(Apache-2.0 AND MIT)",
+  "homepage": "https://github.com/wnfs-wg/nest/tree/main/packages/nest",
+  "repository": {
+    "url": "wnfs-wg/nest",
+    "directory": "packages/nest"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "default": "./dist/src/index.js"
+    }
+  },
+  "main": "dist/src/index.js",
+  "types": "dist/src/index.d.ts",
+  "browser": {
+    "crypto": false,
+    "./src/crypto.js": "./src/crypto-browser.js",
+    "./dist/src/crypto.js": "./dist/src/crypto-browser.js"
+  },
+  "typesVersions": {
+    "*": {
+      ".": [
+        "dist/src/index"
+      ]
+    }
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "lint": "tsc --build && eslint . --quiet --ignore-pattern='README.md' && prettier --check '**/*.{js,ts,yml,json}' --ignore-path ../../.gitignore",
+    "build": "tsc --build",
+    "test": "pnpm run test:node && pnpm run test:browser",
+    "test:node": "mocha 'test/**/!(*.browser).test.ts' --bail --timeout 30000",
+    "test:browser": "playwright-test 'test/**/!(*.node).test.ts' --timeout 30000"
+  },
+  "dependencies": {
+    "@fission-codes/channel": "^0.0.2",
+    "@noble/ciphers": "^0.5.1",
+    "@noble/curves": "^1.3.0",
+    "@noble/hashes": "^1.3.3",
+    "@silen/type": "^1.0.1",
+    "iso-base": "^2.0.1",
+    "multiformats": "^13.1.0",
+    "type-fest": "^4.10.3",
+    "uint8arrays": "^5.0.2"
+  },
+  "devDependencies": {
+    "@types/assert": "^1.5.10",
+    "@types/mocha": "^10.0.6",
+    "@types/node": "^20.11.19",
+    "assert": "^2.1.0",
+    "mocha": "^10.3.0",
+    "playwright-test": "^14.1.1",
+    "tsx": "^4.7.1"
+  },
+  "publishConfig": {
+    "provenance": true
+  },
+  "eslintConfig": {
+    "extends": [
+      "@fission-codes"
+    ],
+    "env": {
+      "mocha": true
+    },
+    "ignorePatterns": [
+      "dist"
+    ],
+    "rules": {
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        {
+          "argsIgnorePattern": "^_",
+          "destructuredArrayIgnorePattern": "^_",
+          "varsIgnorePattern": "^_"
+        }
+      ],
+      "unicorn/no-array-reduce": [
+        "off"
+      ]
+    }
+  },
+  "depcheck": {
+    "specials": [
+      "bin"
+    ],
+    "ignores": [
+      "@types/*",
+      "assert"
+    ]
+  }
+}

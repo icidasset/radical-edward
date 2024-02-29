@@ -1,0 +1,7 @@
+{
+  "separate-pull-requests": true,
+  "release-type": "node",
+  "packages": {
+    "packages/nest": {}
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "extends": "@fission-codes/eslint-config/tsconfig.json",
+  "typedocOptions": {
+    "entryPointStrategy": "packages",
+    "entryPoints": ["packages/*"],
+    "darkHighlightTheme": "github-dark",
+    "sourceLinkExternal": true,
+    "navigationLinks": {
+      "Github": "https://github.com/icidasset/ts-handshakes"
+    }
+  }
+}
