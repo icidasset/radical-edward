@@ -5,23 +5,28 @@ import type * as Channel from './channel'
 
 // 🧩
 
-interface SessionConfig {
-  channel: Channel.Channel
+export interface MaakePayload<Payload> {
+  handshakePayload: Record<string, unknown>
+  tunnelPayload?: Payload
+}
+
+export interface SessionConfig<Payload> {
+  channel: Channel.Channel<Payload>
   ourDID: string
   remoteDID: string
 }
 
 // ABSTRACT CLASS
 
-abstract class Session {
-  readonly channel: Channel.Channel
+abstract class Session<Payload> {
+  readonly channel: Channel.Channel<Payload>
   readonly ourDID: string
   readonly remoteDID: string
   readonly remotePublicKey: Uint8Array
 
   #step: string
 
-  constructor({ channel, ourDID, remoteDID }: SessionConfig) {
+  constructor({ channel, ourDID, remoteDID }: SessionConfig<Payload>) {
     this.channel = channel
     this.ourDID = ourDID
     this.remoteDID = remoteDID
@@ -30,15 +35,15 @@ abstract class Session {
     this.#step = 'handshake'
   }
 
-  async proceed(msg: Channel.Msg): Promise<void> {
-    if (msg.id === this.ourDID) return
-    if (msg.id !== this.remoteDID) return
+  async proceed(msg: Channel.Msg<Payload>): Promise<{ admissible: boolean }> {
+    if (msg.id === this.ourDID) return { admissible: false }
+    if (msg.id !== this.remoteDID) return { admissible: false }
 
     if (this.#step !== msg.step) {
       console.warn(
         `Ignoring client ${msg.id}, steps don't match. Received '${msg.step}', but the active step is '${this.#step}'.`
       )
-      return
+      return { admissible: false }
     }
 
     switch (msg.step) {
@@ -47,22 +52,28 @@ abstract class Session {
         this.#step = 'messages'
       }
     }
+
+    return { admissible: true }
   }
 
-  abstract handshake(msg: Channel.Msg): Promise<void>
+  abstract handshake(msg: Channel.Msg<Payload>): Promise<void>
 }
 
 // PROVIDER
 
-export class ProviderSession extends Session {
+export class ProviderSession<Payload> extends Session<MaakePayload<Payload>> {
   readonly #challenge: Uint8Array
 
-  constructor(config: SessionConfig & { challenge: Uint8Array }) {
+  constructor(
+    config: SessionConfig<MaakePayload<Payload>> & {
+      challenge: Uint8Array
+    }
+  ) {
     super(config)
     this.#challenge = config.challenge
   }
 
-  async handshake(msg: Channel.Msg): Promise<void> {
+  async handshake(msg: Channel.Msg<MaakePayload<Payload>>): Promise<void> {
     const hasCorrectChallenge =
       msg.payload !== null &&
       typeof msg.payload === 'object' &&
@@ -77,15 +88,18 @@ export class ProviderSession extends Session {
       id: this.ourDID,
       step: 'handshake',
       remotePublicKey: this.remotePublicKey,
-      payload: { approved: true },
+      payload: {
+        handshakePayload: { approved: true },
+        tunnelPayload: undefined,
+      },
     })
   }
 }
 
 // CONSUMER
 
-export class ConsumerSession extends Session {
-  async handshake(msg: Channel.Msg): Promise<void> {
+export class ConsumerSession<Payload> extends Session<Payload> {
+  async handshake(msg: Channel.Msg<Payload>): Promise<void> {
     if (
       msg.payload === null ||
       typeof msg.payload !== 'object' ||

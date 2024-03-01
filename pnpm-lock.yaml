@@ -1,4 +1,4 @@
-lockfileVersion: '6.1'
+lockfileVersion: '6.0'
 
 settings:
   autoInstallPeers: true
@@ -56,6 +56,9 @@ importers:
       '@silen/type':
         specifier: ^1.0.1
         version: 1.0.1
+      emittery:
+        specifier: ^1.0.3
+        version: 1.0.3
       iso-base:
         specifier: ^2.0.1
         version: 2.0.1
