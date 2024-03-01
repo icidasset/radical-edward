@@ -1,8 +1,10 @@
 # Radical Edward
 
-Radical packages that can be used to make distributed web apps. Built in mind to work with [WNFS](https://github.com/wnfs-wg/),
+Radical packages that can be used to make distributed web apps.
 
 ![](https://i.pinimg.com/736x/49/c8/d4/49c8d4ac8b632a0fe2661cb4006fba32--purple-shorts-gif-art.jpg)
+
+While some are completely generic, others are built to work with [WNFS](https://github.com/wnfs-wg/) and [UCAN](https://github.com/ucan-wg/).
 
 ## Packages
 
