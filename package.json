@@ -1,5 +1,5 @@
 {
-  "name": "@wnfs-wg/nest-root",
+  "name": "radical-edward",
   "version": "1.0.0",
   "private": true,
   "workspaces": [
@@ -46,7 +46,8 @@
     ],
     "ignorePatterns": [
       ".github",
-      "docs"
+      "docs",
+      "examples"
     ]
   }
 }

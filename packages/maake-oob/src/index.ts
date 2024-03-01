@@ -36,160 +36,200 @@ export interface ProviderEvents<Payload> {
 /**
  * Subscribe to a secure tunnel on behalf of the provider,
  * the party who provides the out of band parameters.
- *
- * @param channelConfig
  */
-export function provide<Payload>(
-  channelConfig: ChannelConfig<Payload>
-): OutOfBandParameters {
-  const challenge = randomBytes(16)
+export class Provider<Payload> extends Emittery<ProviderEvents<Payload>> {
+  readonly #challenge: Uint8Array
+  readonly #sessions: Map<string, ProviderSession<Payload>>
 
-  const privateKey = x25519.utils.randomPrivateKey()
-  const publicKey = x25519.getPublicKey(privateKey)
+  readonly #privateKey: Uint8Array
+  readonly #publicKey: Uint8Array
+  readonly #ourDID: string
 
-  const encodedPublicKey = base58btc.encode(tag(0xec, publicKey))
-  const ourDID = `did:key:${encodedPublicKey}`
+  constructor() {
+    super()
 
-  // Event emitter
-  const emitter = new Emittery<ProviderEvents<Payload>>()
+    this.#challenge = randomBytes(16)
+    this.#sessions = new Map()
 
-  // Open channel
-  const channel = Channel.create<MaakePayload<Payload>>({
-    transport: channelConfig.transport,
+    this.#privateKey = x25519.utils.randomPrivateKey()
+    this.#publicKey = x25519.getPublicKey(this.#privateKey)
+    this.#ourDID = publicKeyToDid(this.#publicKey)
+  }
 
-    ourPrivateKey: privateKey,
-    ourPublicKey: publicKey,
-    payloadDecoder: maakePayloadDecoder(channelConfig.payloadDecoder),
-    payloadEncoder: maakePayloadEncoder(channelConfig.payloadEncoder),
-  })
+  get params(): OutOfBandParameters {
+    return {
+      challenge: Uint8Arrays.toString(this.#challenge, CIPHER_TEXT_ENCODING),
+      publicKey: Uint8Arrays.toString(this.#publicKey, CIPHER_TEXT_ENCODING),
+    }
+  }
 
-  // Session(s)
-  const sessions = new Map<string, ProviderSession<Payload>>()
+  async provide(channelConfig: ChannelConfig<Payload>): Promise<void> {
+    const channel = Channel.create<MaakePayload<Payload>>({
+      transport: channelConfig.transport,
 
-  channel.on(
-    'notification',
-    async (msg: Channel.Msg<MaakePayload<Payload>>): Promise<void> => {
-      let session = sessions.get(msg.id)
+      ourPrivateKey: this.#privateKey,
+      ourPublicKey: this.#publicKey,
+      payloadDecoder: maakePayloadDecoder(channelConfig.payloadDecoder),
+      payloadEncoder: maakePayloadEncoder(channelConfig.payloadEncoder),
+    })
+
+    // Session(s)
+    const onNotification = async (
+      msg: Channel.Msg<MaakePayload<Payload>>
+    ): Promise<void> => {
+      let session = this.#sessions.get(msg.id)
 
       if (session === undefined) {
         session = new ProviderSession<Payload>({
           channel,
-          challenge,
-          ourDID,
+          challenge: this.#challenge,
+          ourDID: this.#ourDID,
           remoteDID: msg.id,
         })
-        sessions.set(msg.id, session)
+        this.#sessions.set(msg.id, session)
       }
 
       const result = await session.proceed(msg)
       if (!result.admissible) return
 
       if (msg.step === 'handshake') {
-        await emitter.emit('new-consumer', {
+        await this.emit('new-consumer', {
           id: msg.id,
           send: makeSend<Payload>({
             channel,
-            ourDID,
+            ourDID: this.#ourDID,
             remotePublicKey: publicKeyFromDID(msg.id),
           }),
         })
       } else if (msg.payload.tunnelPayload !== undefined) {
-        await emitter.emit('message', {
+        await this.emit('message', {
           id: msg.id,
           payload: msg.payload.tunnelPayload,
         })
       }
     }
-  )
 
-  // TODO:
-  // channel.on('error', (err) => {
-  //   //
-  // })
+    channel.on('notification', onNotification)
 
-  // Present out of band params + send fn
-  return {
-    challenge: Uint8Arrays.toString(challenge, CIPHER_TEXT_ENCODING),
-    publicKey: Uint8Arrays.toString(publicKey, CIPHER_TEXT_ENCODING),
+    // TODO: Error handling
   }
 }
 
-// CONSUMER
+// CONSUME
+
+export interface ConsumerEvents<Payload> {
+  message: { id: string; payload: Payload }
+}
 
 /**
  * Subscribe to a secure tunnel on behalf of the consumer,
  * the party who consumes the out of band parameters.
- *
- * @param outOfBandParameters
- * @param channelConfig
  */
-export async function consume<Payload>(
-  outOfBandParameters: OutOfBandParameters,
-  channelConfig: ChannelConfig<Payload>
-): Promise<{ send: SendFn<Payload> }> {
-  const privateKey = x25519.utils.randomPrivateKey()
-  const publicKey = x25519.getPublicKey(privateKey)
+export class Consumer<Payload> extends Emittery<ConsumerEvents<Payload>> {
+  readonly #privateKey: Uint8Array
+  readonly #publicKey: Uint8Array
+  readonly #ourDID: string
 
-  const encodedPublicKey = base58btc.encode(tag(0xec, publicKey))
-  const ourDID = `did:key:${encodedPublicKey}`
+  readonly #remotePublicKey: Uint8Array
+  readonly #remoteDID: string
 
-  const remotePublicKey = Uint8Arrays.fromString(
-    outOfBandParameters.publicKey,
-    CIPHER_TEXT_ENCODING
-  )
+  readonly #outOfBandParameters: OutOfBandParameters
 
-  const encodedRemotePublicKey = base58btc.encode(tag(0xec, remotePublicKey))
-  const remoteDID = `did:key:${encodedRemotePublicKey}`
+  constructor(outOfBandParameters: OutOfBandParameters) {
+    super()
 
-  // Open channel
-  const channel = Channel.create<MaakePayload<Payload>>({
-    transport: channelConfig.transport,
+    this.#privateKey = x25519.utils.randomPrivateKey()
+    this.#publicKey = x25519.getPublicKey(this.#privateKey)
+    this.#ourDID = publicKeyToDid(this.#publicKey)
 
-    ourPrivateKey: privateKey,
-    ourPublicKey: publicKey,
-    payloadDecoder: maakePayloadDecoder(channelConfig.payloadDecoder),
-    payloadEncoder: maakePayloadEncoder(channelConfig.payloadEncoder),
-  })
-
-  // Session
-  const session = new ConsumerSession({
-    channel,
-    ourDID,
-    remoteDID,
-  })
-
-  // Initiate handshake
-  await channel.request({
-    remotePublicKey,
-
-    id: ourDID,
-    step: 'handshake',
-    payload: {
-      handshakePayload: {
-        challenge: Uint8Arrays.fromString(
-          outOfBandParameters.challenge,
-          CIPHER_TEXT_ENCODING
-        ),
-      },
-      tunnelPayload: undefined,
-    },
-  })
-
-  // Listen to messages & completion of handshake
-  await new Promise((resolve) => {
-    channel.on(
-      'notification',
-      async (msg: Channel.Msg<MaakePayload<Payload>>): Promise<void> => {
-        await session.proceed(msg)
-        if (msg.step === 'handshake') resolve(1)
-      }
+    this.#remotePublicKey = Uint8Arrays.fromString(
+      outOfBandParameters.publicKey,
+      CIPHER_TEXT_ENCODING
     )
-  })
 
-  // Send
-  return {
-    send: makeSend({ channel, ourDID, remotePublicKey }),
+    const encodedRemotePublicKey = base58btc.encode(
+      tag(0xec, this.#remotePublicKey)
+    )
+
+    this.#remoteDID = `did:key:${encodedRemotePublicKey}`
+    this.#outOfBandParameters = outOfBandParameters
   }
+
+  async consume(
+    channelConfig: ChannelConfig<Payload>
+  ): Promise<{ send: SendFn<Payload> }> {
+    const channel = Channel.create<MaakePayload<Payload>>({
+      transport: channelConfig.transport,
+
+      ourPrivateKey: this.#privateKey,
+      ourPublicKey: this.#publicKey,
+      payloadDecoder: maakePayloadDecoder(channelConfig.payloadDecoder),
+      payloadEncoder: maakePayloadEncoder(channelConfig.payloadEncoder),
+    })
+
+    // Session
+    const session = new ConsumerSession({
+      channel,
+      ourDID: this.#ourDID,
+      remoteDID: this.#remoteDID,
+    })
+
+    // Initiate handshake
+    await channel.request({
+      remotePublicKey: this.#remotePublicKey,
+
+      id: this.#ourDID,
+      step: 'handshake',
+      payload: {
+        handshakePayload: {
+          challenge: Uint8Arrays.fromString(
+            this.#outOfBandParameters.challenge,
+            CIPHER_TEXT_ENCODING
+          ),
+        },
+        tunnelPayload: undefined,
+      },
+    })
+
+    // Listen to messages & completion of handshake
+    await new Promise((resolve) => {
+      const onNotification = async (
+        msg: Channel.Msg<MaakePayload<Payload>>
+      ): Promise<void> => {
+        await session.proceed(msg)
+        if (msg.step === 'handshake') {
+          resolve(1)
+        } else if (msg.payload.tunnelPayload !== undefined) {
+          await this.emit('message', {
+            id: msg.id,
+            payload: msg.payload.tunnelPayload,
+          })
+        }
+      }
+
+      channel.on('notification', onNotification)
+    })
+
+    // Fin
+    return {
+      send: makeSend({
+        channel,
+        ourDID: this.#ourDID,
+        remotePublicKey: this.#remotePublicKey,
+      }),
+    }
+  }
+}
+
+// 🛠️
+
+/**
+ *
+ * @param publicKey
+ */
+function publicKeyToDid(publicKey: Uint8Array): string {
+  const encodedPublicKey = base58btc.encode(tag(0xec, publicKey))
+  return `did:key:${encodedPublicKey}`
 }
 
 // ㊙️
@@ -248,11 +288,10 @@ function maakePayloadEncoder<Payload>(
 /**
  * Create the function used to send messages through a tunnel.
  *
- * @param channel.channel
- * @param channel
- * @param ourDID
- * @param channel.ourDID
- * @param channel.remotePublicKey
+ * @param root0
+ * @param root0.channel
+ * @param root0.ourDID
+ * @param root0.remotePublicKey
  */
 function makeSend<Payload>({
   channel,

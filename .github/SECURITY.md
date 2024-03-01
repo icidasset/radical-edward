@@ -14,4 +14,4 @@ The project team is committed to transparency in the security issue disclosure
 process. Security advisories will be published through Github [Security Advisories][sec-advisories].
 
 [email]: mailto:icid.asset@gmail.com
-[sec-advisories]: https://github.com/wnfs-wg/nest/security/advisories
+[sec-advisories]: https://github.com/icidasset/radical-edward/security/advisories

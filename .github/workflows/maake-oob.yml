@@ -1,4 +1,4 @@
-name: Nest Package
+name: maake-oob Package
 env:
   CI: true
   FORCE_COLOR: 1
@@ -6,13 +6,13 @@ on:
   push:
     branches: [main]
     paths:
-      - 'packages/nest/**'
-      - .github/workflows/nest.yml
+      - 'packages/maake-oob/**'
+      - .github/workflows/maake-oob.yml
       - pnpm-lock.yaml
   pull_request:
     paths:
-      - 'packages/nest/**'
-      - .github/workflows/nest.yml
+      - 'packages/maake-oob/**'
+      - .github/workflows/maake-oob.yml
       - pnpm-lock.yaml
 jobs:
   test:
@@ -28,5 +28,5 @@ jobs:
           cache: pnpm
       - run: pnpm install
       - run: pnpm run build
-      - run: pnpm -r --filter nest run lint
-      - run: pnpm -r --filter nest run test
+      - run: pnpm -r --filter maake-oob run lint
+      - run: pnpm -r --filter maake-oob run test

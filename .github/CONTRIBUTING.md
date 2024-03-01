@@ -122,9 +122,9 @@ The most important prefixes you should have in mind are:
 - `feat!:`, or `fix!:`, `refactor!:`, etc., which represent a breaking change
   (indicated by the `!`) and will result in a SemVer major.
 
-[codespaces]: https://codespaces.new/wnfs-wg/nest
-[discussions]: https://github.com/wnfs-wg/nest/discussions
-[issue]: https://github.com/wnfs-wg/nest/issues
+[codespaces]: https://codespaces.new/icidasset/radical-edward
+[discussions]: https://github.com/icidasset/radical-edward/discussions
+[issue]: https://github.com/icidasset/radical-edward/issues
 [docs]: https://wnfs-wg.github.io/nest/
 [sscce]: http://www.sscce.org/
 [signing]: https://docs.github.com/en/authentication/managing-commit-signature-verification/signing-commits
