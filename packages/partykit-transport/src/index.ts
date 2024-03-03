@@ -39,18 +39,18 @@ export class PartyKitTransport
   }
 
   #handleMessage(event: WebSocketEventMap['message']): void {
-    this.emit('response', event.data as Message).catch(console.error)
+    this.emit('response', event.data as Message).catch(andThrow)
   }
 
   #handleError(event: WebSocketEventMap['error']): void {
     this.emit(
       'error',
       new Error('Transport Error', { cause: event.error })
-    ).catch(console.error)
+    ).catch(andThrow)
   }
 
   #handleClose(): void {
-    this.emit('close').catch(console.error)
+    this.emit('close').catch(andThrow)
   }
 
   async close(): Promise<void> {
@@ -64,4 +64,12 @@ export class PartyKitTransport
   ): Promise<void> {
     this.#partySocket.send(data.data)
   }
+}
+
+/**
+ *
+ * @param error
+ */
+function andThrow(error: Error): void {
+  throw error
 }

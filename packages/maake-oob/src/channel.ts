@@ -13,10 +13,11 @@ import {
 // 🌳
 
 export interface Msg<Payload> {
-  step: string
-  id: string
-  remotePublicKey: Uint8Array
+  did: string
+  fulfillRequest: boolean
+  msgId: string
   payload: Payload
+  remotePublicKey: Uint8Array
 }
 
 export type Channel<Payload> = C.Channel<Codec<Payload>, Service<Payload>>
@@ -80,13 +81,14 @@ class ChannelCodec<Payload> implements Codec<Payload> {
   encode(data: Msg<Payload>): T.CodecEncoded<TransportDataType> {
     const cipher = this.#makeCipher(data.remotePublicKey)
     const json = {
-      id: data.id,
-      step: data.step,
+      did: data.did,
+      fulfillRequest: data.fulfillRequest,
+      msgId: data.msgId,
       payload: encryptPayload(cipher, this.#payloadEncoder(data.payload)),
     }
 
     return {
-      id: data.id,
+      id: data.msgId,
       data: JSON.stringify(json),
     }
   }
@@ -109,18 +111,19 @@ class ChannelCodec<Payload> implements Codec<Payload> {
     }
 
     // Decrypt
-    const remotePublicKey = publicKeyFromDID(json.id)
+    const remotePublicKey = publicKeyFromDID(json.did)
     const cipher = this.#makeCipher(remotePublicKey)
     const decryptedPayload = decryptPayload(cipher, json.payload)
 
     return {
-      id: undefined,
+      id: json.fulfillRequest ? json.msgId : undefined,
       data: {
         result: {
-          remotePublicKey,
-          id: json.id,
-          step: json.step,
+          did: json.did,
+          fulfillRequest: json.fulfillRequest,
+          msgId: json.msgId,
           payload: this.#payloadDecoder(decryptedPayload),
+          remotePublicKey,
         },
       },
     }
@@ -177,16 +180,21 @@ export function create<Payload>({
  *
  * @param x
  */
-function isProperMessage(
-  x: unknown
-): x is { step: string; id: string; payload: string } {
+function isProperMessage(x: unknown): x is {
+  did: string
+  fulfillRequest: boolean
+  msgId: string
+  payload: string
+} {
   return (
     typeof x === 'object' &&
     x !== null &&
-    'step' in x &&
-    'id' in x &&
+    'did' in x &&
+    'fulfillRequest' in x &&
+    'msgId' in x &&
     'payload' in x &&
-    typeof x.step === 'string' &&
-    typeof x.id === 'string'
+    typeof x.did === 'string' &&
+    typeof x.fulfillRequest === 'boolean' &&
+    typeof x.msgId === 'string'
   )
 }

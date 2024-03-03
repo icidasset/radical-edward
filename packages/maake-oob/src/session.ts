@@ -24,7 +24,7 @@ abstract class Session<Payload> {
   readonly remoteDID: string
   readonly remotePublicKey: Uint8Array
 
-  #step: string
+  #handshakeCompleted: boolean
 
   constructor({ channel, ourDID, remoteDID }: SessionConfig<Payload>) {
     this.channel = channel
@@ -32,28 +32,21 @@ abstract class Session<Payload> {
     this.remoteDID = remoteDID
     this.remotePublicKey = publicKeyFromDID(remoteDID)
 
-    this.#step = 'handshake'
+    this.#handshakeCompleted = false
   }
 
   async proceed(msg: Channel.Msg<Payload>): Promise<{ admissible: boolean }> {
-    if (msg.id === this.ourDID) return { admissible: false }
-    if (msg.id !== this.remoteDID) return { admissible: false }
+    if (msg.did === this.ourDID) return { admissible: false }
+    if (msg.did !== this.remoteDID) return { admissible: false }
 
-    if (this.#step !== msg.step) {
-      console.warn(
-        `Ignoring client ${msg.id}, steps don't match. Received '${msg.step}', but the active step is '${this.#step}'.`
-      )
-      return { admissible: false }
-    }
-
-    switch (msg.step) {
+    switch (msg.msgId) {
       case 'handshake': {
         await this.handshake(msg)
-        this.#step = 'messages'
+        this.#handshakeCompleted = true
       }
     }
 
-    return { admissible: true }
+    return { admissible: this.#handshakeCompleted }
   }
 
   abstract handshake(msg: Channel.Msg<Payload>): Promise<void>
@@ -88,13 +81,14 @@ export class ProviderSession<Payload> extends Session<MaakePayload<Payload>> {
       )
 
     if (!hasCorrectChallenge) {
-      throw new Error(`Challenge failed during handshake with ${msg.id}`)
+      throw new Error(`Challenge failed during handshake with ${msg.did}`)
     }
 
     this.channel
       .request({
-        id: this.ourDID,
-        step: 'handshake',
+        did: this.ourDID,
+        fulfillRequest: true,
+        msgId: 'handshake',
         remotePublicKey: this.remotePublicKey,
         payload: {
           handshakePayload: { approved: true },

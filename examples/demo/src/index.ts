@@ -33,8 +33,12 @@ export async function provide(): Promise<void> {
 
   const qrCodeDataURL = await QRCode.toDataURL(url.toString())
   const qrCodeNode = document.querySelector('#qr-code')
-  if (qrCodeNode !== null)
-    qrCodeNode.innerHTML = `<img src="${qrCodeDataURL}" /><br /><a href="${url.toString()}">${url.toString()}</a>`
+  if (qrCodeNode !== null) {
+    qrCodeNode.innerHTML = `<img src="${qrCodeDataURL}" /><br /><a style="word-break: break-all;" href="${url.toString()}">${url.toString()}</a></br><button id="copy-url" style="margin-top: 1em; display: block;">Copy URL</button>`
+    document.querySelector('#copy-url')?.addEventListener('click', () => {
+      navigator.clipboard.writeText(url.toString()).catch(console.error)
+    })
+  }
 
   const transport = new Transport({
     peerId: provider.id,
@@ -42,19 +46,29 @@ export async function provide(): Promise<void> {
     host: HOST,
   })
 
-  const consumers: Record<string, { id: string; send: SendFn<Payload> }> = {}
+  const consumers: Record<
+    string,
+    { did: string; answer: SendFn<Payload>; send: SendFn<Payload> }
+  > = {}
 
-  provider.on('new-consumer', async ({ id, send }) => {
-    console.log('Secure tunnel established with', id)
-    consumers[id] = { id, send }
-
-    await send(new TextEncoder().encode('🚀'))
+  provider.on('new-consumer', async ({ did, answer, send }) => {
+    console.log('Secure tunnel established with', did)
+    consumers[did] = { did, answer, send }
   })
 
-  provider.on('message', async ({ id, payload }) => {
-    console.log('Provider got message from', id, ':', payload)
+  provider.on('message', async ({ did, msgId, payload }) => {
+    console.log(
+      'Provider got message from',
+      did,
+      ':',
+      new TextDecoder().decode(payload)
+    )
 
-    // await consumers[id]?.send(new TextEncoder().encode('🚀'))
+    if (msgId === '👋') {
+      consumers[did]
+        ?.answer('👋', new TextEncoder().encode('🚀'))
+        ?.catch(console.error)
+    }
   })
 
   await provider.provide({
@@ -81,11 +95,16 @@ export async function consume(params: OutOfBandParameters): Promise<void> {
     host: HOST,
   })
 
-  consumer.on('message', ({ id, payload }) => {
-    console.log('Consumer got message from', id, ':', payload)
+  consumer.on('message', ({ did, payload }) => {
+    console.log(
+      'Consumer got message from',
+      did,
+      ':',
+      new TextDecoder().decode(payload)
+    )
   })
 
-  await consumer.consume({
+  const { send } = await consumer.consume({
     payloadDecoder: decoder,
     payloadEncoder: encoder,
     transport,
@@ -93,7 +112,16 @@ export async function consume(params: OutOfBandParameters): Promise<void> {
 
   console.log('Secure tunnel established with', consumer.providerId)
 
-  // await send(new TextEncoder().encode('👋 from consumer'))
+  const response = await send(
+    '👋',
+    new TextEncoder().encode('👋 from consumer')
+  )
+
+  if (response.error === undefined) {
+    console.log('👋 result:', new TextDecoder().decode(response.result))
+  } else {
+    console.error('👋 error:', response.error)
+  }
 }
 
 // 🛠️
