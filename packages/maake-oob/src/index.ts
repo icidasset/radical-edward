@@ -21,7 +21,7 @@ export interface OutOfBandParameters {
 export interface ChannelConfig<Payload> {
   payloadDecoder: Channel.PayloadDecoder<Payload>
   payloadEncoder: Channel.PayloadEncoder<Payload>
-  transport: Transport
+  transport: Transport<Channel.TransportDataType>
 }
 
 export type SendFn<Payload> = (payload: Payload) => Promise<void>
@@ -56,6 +56,10 @@ export class Provider<Payload> extends Emittery<ProviderEvents<Payload>> {
     this.#ourDID = publicKeyToDid(this.#publicKey)
   }
 
+  get id(): string {
+    return this.#ourDID
+  }
+
   get params(): OutOfBandParameters {
     return {
       challenge: Uint8Arrays.toString(this.#challenge, CIPHER_TEXT_ENCODING),
@@ -68,7 +72,7 @@ export class Provider<Payload> extends Emittery<ProviderEvents<Payload>> {
       transport: channelConfig.transport,
 
       ourPrivateKey: this.#privateKey,
-      ourPublicKey: this.#publicKey,
+      providerPublicKey: this.#publicKey,
       payloadDecoder: maakePayloadDecoder(channelConfig.payloadDecoder),
       payloadEncoder: maakePayloadEncoder(channelConfig.payloadEncoder),
     })
@@ -92,6 +96,7 @@ export class Provider<Payload> extends Emittery<ProviderEvents<Payload>> {
       const result = await session.proceed(msg)
       if (!result.admissible) return
 
+      // Handshake approved
       if (msg.step === 'handshake') {
         await this.emit('new-consumer', {
           id: msg.id,
@@ -101,7 +106,11 @@ export class Provider<Payload> extends Emittery<ProviderEvents<Payload>> {
             remotePublicKey: publicKeyFromDID(msg.id),
           }),
         })
-      } else if (msg.payload.tunnelPayload !== undefined) {
+        return
+      }
+
+      // Pass on messages after handshake
+      if (msg.payload.tunnelPayload !== undefined) {
         await this.emit('message', {
           id: msg.id,
           payload: msg.payload.tunnelPayload,
@@ -112,6 +121,7 @@ export class Provider<Payload> extends Emittery<ProviderEvents<Payload>> {
     channel.on('notification', onNotification)
 
     // TODO: Error handling
+    channel.on('error', console.error)
   }
 }
 
@@ -155,6 +165,10 @@ export class Consumer<Payload> extends Emittery<ConsumerEvents<Payload>> {
     this.#outOfBandParameters = outOfBandParameters
   }
 
+  get id(): string {
+    return this.#ourDID
+  }
+
   async consume(
     channelConfig: ChannelConfig<Payload>
   ): Promise<{ send: SendFn<Payload> }> {
@@ -162,7 +176,7 @@ export class Consumer<Payload> extends Emittery<ConsumerEvents<Payload>> {
       transport: channelConfig.transport,
 
       ourPrivateKey: this.#privateKey,
-      ourPublicKey: this.#publicKey,
+      providerPublicKey: this.#remotePublicKey,
       payloadDecoder: maakePayloadDecoder(channelConfig.payloadDecoder),
       payloadEncoder: maakePayloadEncoder(channelConfig.payloadEncoder),
     })
@@ -174,41 +188,54 @@ export class Consumer<Payload> extends Emittery<ConsumerEvents<Payload>> {
       remoteDID: this.#remoteDID,
     })
 
-    // Initiate handshake
-    await channel.request({
-      remotePublicKey: this.#remotePublicKey,
-
-      id: this.#ourDID,
-      step: 'handshake',
-      payload: {
-        handshakePayload: {
-          challenge: Uint8Arrays.fromString(
-            this.#outOfBandParameters.challenge,
-            CIPHER_TEXT_ENCODING
-          ),
-        },
-        tunnelPayload: undefined,
-      },
-    })
-
     // Listen to messages & completion of handshake
-    await new Promise((resolve) => {
-      const onNotification = async (
+    const promise = new Promise((resolve, reject) => {
+      const onNotification = (
         msg: Channel.Msg<MaakePayload<Payload>>
-      ): Promise<void> => {
-        await session.proceed(msg)
-        if (msg.step === 'handshake') {
-          resolve(1)
-        } else if (msg.payload.tunnelPayload !== undefined) {
-          await this.emit('message', {
-            id: msg.id,
-            payload: msg.payload.tunnelPayload,
+      ): void => {
+        session
+          .proceed(msg)
+          .then(({ admissible }) => {
+            if (!admissible) return
+            if (msg.step === 'handshake') {
+              resolve(1)
+            } else if (msg.payload.tunnelPayload !== undefined) {
+              this.emit('message', {
+                id: msg.id,
+                payload: msg.payload.tunnelPayload,
+              }).catch(console.error)
+            }
           })
-        }
+          .catch(
+            msg.step === 'handshake'
+              ? reject
+              : (err: Error) => {
+                  throw err
+                }
+          )
       }
 
       channel.on('notification', onNotification)
     })
+
+    // Initiate handshake
+    channel
+      .request({
+        remotePublicKey: this.#remotePublicKey,
+
+        id: this.#ourDID,
+        step: 'handshake',
+        payload: {
+          handshakePayload: {
+            challenge: this.#outOfBandParameters.challenge,
+          },
+          tunnelPayload: undefined,
+        },
+      })
+      .catch(console.error)
+
+    // Wait for handshake to complete
+    await promise
 
     // Fin
     return {
@@ -248,15 +275,22 @@ function maakePayloadDecoder<Payload>(
     if (
       typeof obj === 'object' &&
       'handshakePayload' in obj &&
+      typeof obj.handshakePayload === 'string' &&
       (!('tunnelPayload' in obj) ||
         ('tunnelPayload' in obj &&
           (typeof obj.tunnelPayload === 'string' ||
             obj.tunnelPayload === undefined)))
-    )
+    ) {
       return {
-        handshakePayload: obj.handshakePayload,
-        tunnelPayload: payloadDecoder(data),
+        handshakePayload: JSON.parse(obj.handshakePayload as string),
+        tunnelPayload:
+          'tunnelPayload' in obj && typeof obj.tunnelPayload === 'string'
+            ? payloadDecoder(
+                Uint8Arrays.fromString(obj.tunnelPayload as string, 'base64')
+              )
+            : undefined,
       }
+    }
 
     throw new Error('Failed to decode payload')
   }
@@ -303,14 +337,16 @@ function makeSend<Payload>({
   remotePublicKey: Uint8Array
 }) {
   return async (payload: Payload | undefined) => {
-    await channel.request({
-      step: 'messages',
-      id: ourDID,
-      remotePublicKey,
-      payload: {
-        handshakePayload: {},
-        tunnelPayload: payload,
-      },
-    })
+    channel
+      .request({
+        step: 'messages',
+        id: ourDID,
+        remotePublicKey,
+        payload: {
+          handshakePayload: {},
+          tunnelPayload: payload,
+        },
+      })
+      .catch(console.error)
   }
 }

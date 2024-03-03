@@ -73,7 +73,8 @@
       "mocha": true
     },
     "ignorePatterns": [
-      "dist"
+      "dist",
+      "node_modules"
     ],
     "rules": {
       "@typescript-eslint/no-unused-vars": [
@@ -83,9 +84,6 @@
           "destructuredArrayIgnorePattern": "^_",
           "varsIgnorePattern": "^_"
         }
-      ],
-      "unicorn/no-array-reduce": [
-        "off"
       ]
     }
   },

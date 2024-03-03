@@ -10,26 +10,45 @@
   "main": "dist/index.js",
   "scripts": {
     "lint": "tsc --build && eslint . && prettier --check '**/*.{js,jsx,ts,tsx,yml,json,css}' --ignore-path ../../.gitignore",
-    "dev": "rsbuild dev --open",
-    "build": "rsbuild build",
-    "preview": "rsbuild preview"
+    "dev": "vite dev",
+    "build": "vite build",
+    "preview": "vite preview"
   },
   "dependencies": {
     "@fission-codes/channel": "^0.0.2",
+    "emittery": "^1.0.3",
     "maake-oob": "*",
-    "unws": "^0.2.4"
+    "partykit": "^0.0.97",
+    "partysocket": "^1.0.0",
+    "type-fest": "^4.10.3",
+    "uint8arrays": "^5.0.2"
   },
   "devDependencies": {
-    "@rsbuild/core": "^0.4.4",
     "@types/node": "^20.11.0",
-    "typescript": "5.3.3"
+    "typescript": "5.3.3",
+    "vite": "^5.1.4"
   },
   "eslintConfig": {
     "extends": [
       "@fission-codes"
     ],
     "ignorePatterns": [
-      "dist"
-    ]
+      "dist",
+      "node_modules"
+    ],
+    "rules": {
+      "import/extensions": [
+        "off",
+        "always"
+      ],
+      "no-console": [
+        "off",
+        "always"
+      ],
+      "require-await": [
+        "off",
+        "always"
+      ]
+    }
   }
 }

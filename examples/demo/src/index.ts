@@ -4,34 +4,41 @@ import {
   Provider,
   type SendFn,
 } from 'maake-oob'
-import { WebSocket } from 'unws'
-import { WebsocketTransport } from '@fission-codes/channel/transports/ws.js'
 
-interface Payload {
-  test: boolean
-}
+import { PartyKitTransport as Transport } from './transports/partykit'
+
+// 🏔️
+
+const HOST = 'localhost:1999'
+
+// 🧩
+
+type Payload = Uint8Array
 
 // PROVIDE
 
 let params: OutOfBandParameters | undefined
 
+/**
+ *
+ */
 export async function provide(): Promise<void> {
   const provider = new Provider<Payload>()
-  const transport = new WebsocketTransport(
-    `ws://0.0.0.0:8010/${provider.params.publicKey}`,
-    {
-      ws: WebSocket,
-    }
-  )
 
   params = provider.params
 
-  console.log(params)
+  console.log('Providing', params)
+
+  const transport = new Transport({
+    peerId: provider.id,
+    room: params.publicKey,
+    host: HOST,
+  })
 
   const consumers: Record<string, { id: string; send: SendFn<Payload> }> = {}
 
   provider.on('new-consumer', ({ id, send }) => {
-    console.log('New consumer', id)
+    console.log('Secure tunnel established with', id)
     consumers[id] = { id, send }
   })
 
@@ -48,48 +55,70 @@ export async function provide(): Promise<void> {
 
 // CONSUME
 
+/**
+ *
+ */
 export async function consume(): Promise<void> {
   if (params === undefined) {
-    alert('Out of band parameters have not been provided yet')
-    return
+    throw new Error('Out of band parameters have not been provided yet')
   }
 
+  console.log('Consuming', params)
+  console.log('Establishing secure tunnel')
+
   const consumer = new Consumer<Payload>(params)
-  const transport = new WebsocketTransport(
-    `ws://0.0.0.0:8010/${params.publicKey}`,
-    {
-      ws: WebSocket,
-    }
-  )
+  const transport = new Transport({
+    peerId: consumer.id,
+    room: params.publicKey,
+    host: HOST,
+  })
 
   consumer.on('message', ({ id, payload }) => {
     console.log('Consumer got message from', id, ':', payload)
   })
 
-  await consumer.consume({
+  const { send } = await consumer.consume({
     payloadDecoder: decoder,
     payloadEncoder: encoder,
     transport,
   })
+
+  await send(new TextEncoder().encode('👋'))
 }
 
 // 🛠️
 
+/**
+ *
+ * @param data
+ */
 function decoder(data: Uint8Array): Payload {
-  return { test: true }
+  return data
 }
 
+/**
+ *
+ * @param payload
+ */
 function encoder(payload: Payload): Uint8Array {
-  return new Uint8Array()
+  return payload
 }
 
 // 🚀
 
 document.addEventListener('DOMContentLoaded', () => {
-  document.querySelector('#provide')?.addEventListener('click', () => {
+  const onProvideClick = (event: Event): void => {
     provide()
-  })
-  document.querySelector('#consume')?.addEventListener('click', () => {
+      .then(() => event.target?.removeEventListener('click', onProvideClick))
+      .catch(console.error)
+  }
+
+  const onConsumeClick = (event: Event): void => {
     consume()
-  })
+      .then(() => event.target?.removeEventListener('click', onConsumeClick))
+      .catch(console.error)
+  }
+
+  document.querySelector('#provide')?.addEventListener('click', onProvideClick)
+  document.querySelector('#consume')?.addEventListener('click', onConsumeClick)
 })

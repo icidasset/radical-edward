@@ -1,4 +1,6 @@
 import type * as T from '@fission-codes/channel/types'
+import type { Jsonifiable } from 'type-fest'
+
 import * as C from '@fission-codes/channel'
 
 import {
@@ -20,11 +22,17 @@ export interface Msg<Payload> {
 }
 
 export type Channel<Payload> = C.Channel<Codec<Payload>, Service<Payload>>
-export type Codec<Payload> = T.Codec<string, Msg<Payload>, Msg<Payload>, Error>
+export type Codec<Payload> = T.Codec<
+  TransportDataType,
+  Msg<Payload>,
+  Msg<Payload>,
+  Error
+>
 export type Service<Payload> = T.Service<
   Array<T.IO<Msg<Payload>, Msg<Payload>>>,
   Msg<Payload>
 >
+export type TransportDataType = Jsonifiable
 
 export type PayloadDecoder<Payload> = (data: Uint8Array) => Payload
 export type PayloadEncoder<Payload> = (payload: Payload) => Uint8Array
@@ -35,25 +43,25 @@ class ChannelCodec<Payload> implements Codec<Payload> {
   #nonce: Uint8Array
 
   readonly #ourPrivateKey: Uint8Array
-  readonly #ourPublicKey: Uint8Array
+  readonly #providerPublicKey: Uint8Array
   readonly #payloadDecoder: PayloadDecoder<Payload>
   readonly #payloadEncoder: PayloadEncoder<Payload>
 
   constructor({
     ourPrivateKey,
-    ourPublicKey,
+    providerPublicKey,
     payloadDecoder,
     payloadEncoder,
   }: {
     ourPrivateKey: Uint8Array
-    ourPublicKey: Uint8Array
+    providerPublicKey: Uint8Array
     payloadDecoder: PayloadDecoder<Payload>
     payloadEncoder: PayloadEncoder<Payload>
   }) {
     this.#nonce = INITIAL_NONCE
 
     this.#ourPrivateKey = ourPrivateKey
-    this.#ourPublicKey = ourPublicKey
+    this.#providerPublicKey = providerPublicKey
     this.#payloadDecoder = payloadDecoder
     this.#payloadEncoder = payloadEncoder
   }
@@ -61,7 +69,7 @@ class ChannelCodec<Payload> implements Codec<Payload> {
   #makeCipher(remotePublicKey: Uint8Array): Cipher {
     const { cipher, nextNonce } = makeCipher({
       nonce: this.#nonce,
-      providerPublicKey: this.#ourPublicKey,
+      providerPublicKey: this.#providerPublicKey,
       ourPrivateKey: this.#ourPrivateKey,
       remotePublicKey,
     })
@@ -71,16 +79,17 @@ class ChannelCodec<Payload> implements Codec<Payload> {
     return cipher
   }
 
-  encode(data: Msg<Payload>): T.CodecEncoded<string> {
+  encode(data: Msg<Payload>): T.CodecEncoded<TransportDataType> {
     const cipher = this.#makeCipher(data.remotePublicKey)
+    const json = {
+      id: data.id,
+      step: data.step,
+      payload: encryptPayload(cipher, this.#payloadEncoder(data.payload)),
+    }
 
     return {
       id: data.id,
-      data: JSON.stringify({
-        id: data.id,
-        step: data.step,
-        payload: encryptPayload(cipher, this.#payloadEncoder(data.payload)),
-      }),
+      data: json,
     }
   }
 
@@ -92,32 +101,25 @@ class ChannelCodec<Payload> implements Codec<Payload> {
     }
   }
 
-  decode(data: unknown): T.CodecDecoded<T.Result<Msg<Payload>>> {
-    if (typeof data !== 'string')
-      return this.#decodeError(
-        `Invalid channel data type expected string got ${typeof data}.`,
-        data
-      )
+  decode(data: TransportDataType): T.CodecDecoded<T.Result<Msg<Payload>>> {
+    const json = data
 
-    // Parse
-    const parsed = JSON.parse(data)
-
-    if (!isProperMessage(parsed)) {
-      return this.#decodeError('Improperly formatted channel data.', parsed)
+    if (!isProperMessage(json)) {
+      return this.#decodeError('Improperly formatted channel data.', json)
     }
 
     // Decrypt
-    const remotePublicKey = publicKeyFromDID(parsed.id)
+    const remotePublicKey = publicKeyFromDID(json.id)
     const cipher = this.#makeCipher(remotePublicKey)
-    const decryptedPayload = decryptPayload(cipher, parsed.payload)
+    const decryptedPayload = decryptPayload(cipher, json.payload)
 
     return {
-      id: parsed.id,
+      id: undefined,
       data: {
         result: {
           remotePublicKey,
-          id: parsed.id,
-          step: parsed.step,
+          id: json.id,
+          step: json.step,
           payload: this.#payloadDecoder(decryptedPayload),
         },
       },
@@ -133,7 +135,7 @@ class ChannelCodec<Payload> implements Codec<Payload> {
  * @param root0
  * @param root0.transport
  * @param root0.ourPrivateKey
- * @param root0.ourPublicKey
+ * @param root0.providerPublicKey
  * @param root0.payloadDecoder
  * @param root0.payloadEncoder
  */
@@ -141,21 +143,21 @@ export function create<Payload>({
   transport,
 
   ourPrivateKey,
-  ourPublicKey,
+  providerPublicKey,
   payloadDecoder,
   payloadEncoder,
 }: {
-  transport: T.Transport
+  transport: T.Transport<TransportDataType>
 
   ourPrivateKey: Uint8Array
-  ourPublicKey: Uint8Array
+  providerPublicKey: Uint8Array
 
   payloadDecoder: PayloadDecoder<Payload>
   payloadEncoder: PayloadEncoder<Payload>
 }): Channel<Payload> {
   const codec = new ChannelCodec<Payload>({
     ourPrivateKey,
-    ourPublicKey,
+    providerPublicKey,
     payloadDecoder,
     payloadEncoder,
   })

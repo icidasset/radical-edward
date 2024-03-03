@@ -1,6 +1,6 @@
 import * as Uint8Arrays from 'uint8arrays'
 
-import { publicKeyFromDID } from './common'
+import { CIPHER_TEXT_ENCODING, publicKeyFromDID } from './common'
 import type * as Channel from './channel'
 
 // 🧩
@@ -74,25 +74,34 @@ export class ProviderSession<Payload> extends Session<MaakePayload<Payload>> {
   }
 
   async handshake(msg: Channel.Msg<MaakePayload<Payload>>): Promise<void> {
+    const handshakePayload = msg.payload.handshakePayload
+
     const hasCorrectChallenge =
-      msg.payload !== null &&
-      typeof msg.payload === 'object' &&
-      'challenge' in msg.payload &&
-      Uint8Arrays.equals(msg.payload.challenge as Uint8Array, this.#challenge)
+      'challenge' in handshakePayload &&
+      typeof handshakePayload.challenge === 'string' &&
+      Uint8Arrays.equals(
+        Uint8Arrays.fromString(
+          handshakePayload.challenge,
+          CIPHER_TEXT_ENCODING
+        ),
+        this.#challenge
+      )
 
     if (!hasCorrectChallenge) {
       throw new Error(`Challenge failed during handshake with ${msg.id}`)
     }
 
-    await this.channel.request({
-      id: this.ourDID,
-      step: 'handshake',
-      remotePublicKey: this.remotePublicKey,
-      payload: {
-        handshakePayload: { approved: true },
-        tunnelPayload: undefined,
-      },
-    })
+    this.channel
+      .request({
+        id: this.ourDID,
+        step: 'handshake',
+        remotePublicKey: this.remotePublicKey,
+        payload: {
+          handshakePayload: { approved: true },
+          tunnelPayload: undefined,
+        },
+      })
+      .catch(console.error)
   }
 }
 

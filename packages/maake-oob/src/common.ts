@@ -44,21 +44,6 @@ export function decryptPayload(
 }
 
 /**
- * Decrypt a JSON payload.
- *
- * @param cipher
- * @param encryptedPayload
- */
-export function decryptJSONPayload(
-  cipher: Cipher,
-  encryptedPayload: string
-): unknown {
-  return JSON.parse(
-    Uint8Arrays.toString(decryptPayload(cipher, encryptedPayload), 'utf8')
-  )
-}
-
-/**
  * Encrypt bytes.
  *
  * @param cipher
@@ -66,19 +51,6 @@ export function decryptJSONPayload(
  */
 export function encryptPayload(cipher: Cipher, payload: Uint8Array): string {
   return Uint8Arrays.toString(cipher.encrypt(payload), CIPHER_TEXT_ENCODING)
-}
-
-/**
- * Encrypt a JSON payload.
- *
- * @param cipher
- * @param payload
- */
-export function encryptJSONPayload(cipher: Cipher, payload: unknown): string {
-  return encryptPayload(
-    cipher,
-    Uint8Arrays.fromString(JSON.stringify(payload), 'utf8')
-  )
 }
 
 /**

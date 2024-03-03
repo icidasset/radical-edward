@@ -46,8 +46,7 @@
     ],
     "ignorePatterns": [
       ".github",
-      "docs",
-      "examples"
+      "docs"
     ]
   }
 }
