@@ -1,14 +1,14 @@
 {
-  "name": "maake-oob",
+  "name": "partykit-transport",
   "type": "module",
   "version": "0.1.0",
-  "description": "A utility layer around the `wnfs` package.",
+  "description": "A transport implementation for the @fission-codes/channel library.",
   "author": "Steven Vandevelde <icid.asset@gmail.com> (tokono.ma)",
   "license": "(Apache-2.0 AND MIT)",
-  "homepage": "https://github.com/icidasset/radical-edward/tree/main/packages/maake-oob",
+  "homepage": "https://github.com/icidasset/radical-edward/tree/main/packages/partykit-transport",
   "repository": {
     "url": "icidasset/radical-edward",
-    "directory": "packages/maake-oob"
+    "directory": "packages/partykit-transport"
   },
   "exports": {
     ".": {
@@ -38,13 +38,8 @@
   },
   "dependencies": {
     "@fission-codes/channel": "^0.0.2",
-    "@noble/ciphers": "^0.5.1",
-    "@noble/curves": "^1.3.0",
-    "@noble/hashes": "^1.3.3",
     "emittery": "^1.0.3",
-    "iso-base": "^2.0.1",
-    "multiformats": "^13.1.0",
-    "uint8arrays": "^5.0.2"
+    "partysocket": "^1.0.0"
   },
   "devDependencies": {
     "@types/assert": "^1.5.10",

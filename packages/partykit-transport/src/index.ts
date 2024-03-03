@@ -1,5 +1,4 @@
-import type { Jsonifiable } from 'type-fest'
-import type { WebSocketEventMap } from 'partysocket/ws'
+import type { Message, WebSocketEventMap } from 'partysocket/ws'
 import type {
   CodecEncoded,
   Transport,
@@ -12,7 +11,7 @@ import PartySocket from 'partysocket'
 
 // 🧩
 
-export type DataType = Jsonifiable
+export type DataType = Message
 
 // ⚡
 
@@ -40,10 +39,7 @@ export class PartyKitTransport
   }
 
   #handleMessage(event: WebSocketEventMap['message']): void {
-    this.emit(
-      'response',
-      JSON.parse(event.data as string) as Jsonifiable
-    ).catch(console.error)
+    this.emit('response', event.data as Message).catch(console.error)
   }
 
   #handleError(event: WebSocketEventMap['error']): void {
@@ -66,6 +62,6 @@ export class PartyKitTransport
     data: CodecEncoded<DataType>,
     _options?: TransportSendOptions
   ): Promise<void> {
-    this.#partySocket.send(JSON.stringify(data.data))
+    this.#partySocket.send(data.data)
   }
 }

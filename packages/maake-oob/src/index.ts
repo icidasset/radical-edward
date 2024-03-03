@@ -29,8 +29,9 @@ export type SendFn<Payload> = (payload: Payload) => Promise<void>
 // PROVIDE
 
 export interface ProviderEvents<Payload> {
-  'new-consumer': { id: string; send: SendFn<Payload> }
+  error: Error
   message: { id: string; payload: Payload }
+  'new-consumer': { id: string; send: SendFn<Payload> }
 }
 
 /**
@@ -106,11 +107,10 @@ export class Provider<Payload> extends Emittery<ProviderEvents<Payload>> {
             remotePublicKey: publicKeyFromDID(msg.id),
           }),
         })
-        return
       }
 
       // Pass on messages after handshake
-      if (msg.payload.tunnelPayload !== undefined) {
+      if (msg.step === 'messages' && msg.payload.tunnelPayload !== undefined) {
         await this.emit('message', {
           id: msg.id,
           payload: msg.payload.tunnelPayload,
@@ -119,15 +119,17 @@ export class Provider<Payload> extends Emittery<ProviderEvents<Payload>> {
     }
 
     channel.on('notification', onNotification)
-
-    // TODO: Error handling
-    channel.on('error', console.error)
+    channel.on('error', async (error) => {
+      // Bubble up channel errors
+      await this.emit('error', error)
+    })
   }
 }
 
 // CONSUME
 
 export interface ConsumerEvents<Payload> {
+  error: Error
   message: { id: string; payload: Payload }
 }
 
@@ -169,6 +171,10 @@ export class Consumer<Payload> extends Emittery<ConsumerEvents<Payload>> {
     return this.#ourDID
   }
 
+  get providerId(): string {
+    return this.#remoteDID
+  }
+
   async consume(
     channelConfig: ChannelConfig<Payload>
   ): Promise<{ send: SendFn<Payload> }> {
@@ -195,15 +201,15 @@ export class Consumer<Payload> extends Emittery<ConsumerEvents<Payload>> {
       ): void => {
         session
           .proceed(msg)
-          .then(({ admissible }) => {
+          .then(async ({ admissible }) => {
             if (!admissible) return
             if (msg.step === 'handshake') {
               resolve(1)
             } else if (msg.payload.tunnelPayload !== undefined) {
-              this.emit('message', {
+              await this.emit('message', {
                 id: msg.id,
                 payload: msg.payload.tunnelPayload,
-              }).catch(console.error)
+              })
             }
           })
           .catch(
@@ -216,6 +222,10 @@ export class Consumer<Payload> extends Emittery<ConsumerEvents<Payload>> {
       }
 
       channel.on('notification', onNotification)
+      channel.on('error', async (error) => {
+        // Bubble up channel errors
+        await this.emit('error', error)
+      })
     })
 
     // Initiate handshake
@@ -232,7 +242,9 @@ export class Consumer<Payload> extends Emittery<ConsumerEvents<Payload>> {
           tunnelPayload: undefined,
         },
       })
-      .catch(console.error)
+      .catch((error) => {
+        throw error
+      })
 
     // Wait for handshake to complete
     await promise
@@ -347,6 +359,8 @@ function makeSend<Payload>({
           tunnelPayload: payload,
         },
       })
-      .catch(console.error)
+      .catch((error) => {
+        throw error
+      })
   }
 }

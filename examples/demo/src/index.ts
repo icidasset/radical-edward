@@ -5,7 +5,8 @@ import {
   type SendFn,
 } from 'maake-oob'
 
-import { PartyKitTransport as Transport } from './transports/partykit'
+import { PartyKitTransport as Transport } from 'partykit-transport'
+import QRCode from 'qrcode'
 
 // 🏔️
 
@@ -17,33 +18,43 @@ type Payload = Uint8Array
 
 // PROVIDE
 
-let params: OutOfBandParameters | undefined
-
 /**
  *
  */
 export async function provide(): Promise<void> {
   const provider = new Provider<Payload>()
 
-  params = provider.params
+  console.log('Providing', provider.params)
+  console.log('Waiting for a consumer')
 
-  console.log('Providing', params)
+  const url = new URL(location.href)
+  url.searchParams.set('challenge', provider.params.challenge)
+  url.searchParams.set('publicKey', provider.params.publicKey)
+
+  const qrCodeDataURL = await QRCode.toDataURL(url.toString())
+  const qrCodeNode = document.querySelector('#qr-code')
+  if (qrCodeNode !== null)
+    qrCodeNode.innerHTML = `<img src="${qrCodeDataURL}" /><br /><a href="${url.toString()}">${url.toString()}</a>`
 
   const transport = new Transport({
     peerId: provider.id,
-    room: params.publicKey,
+    room: provider.params.publicKey,
     host: HOST,
   })
 
   const consumers: Record<string, { id: string; send: SendFn<Payload> }> = {}
 
-  provider.on('new-consumer', ({ id, send }) => {
+  provider.on('new-consumer', async ({ id, send }) => {
     console.log('Secure tunnel established with', id)
     consumers[id] = { id, send }
+
+    await send(new TextEncoder().encode('🚀'))
   })
 
-  provider.on('message', ({ id, payload }) => {
+  provider.on('message', async ({ id, payload }) => {
     console.log('Provider got message from', id, ':', payload)
+
+    // await consumers[id]?.send(new TextEncoder().encode('🚀'))
   })
 
   await provider.provide({
@@ -57,12 +68,9 @@ export async function provide(): Promise<void> {
 
 /**
  *
+ * @param params
  */
-export async function consume(): Promise<void> {
-  if (params === undefined) {
-    throw new Error('Out of band parameters have not been provided yet')
-  }
-
+export async function consume(params: OutOfBandParameters): Promise<void> {
   console.log('Consuming', params)
   console.log('Establishing secure tunnel')
 
@@ -77,13 +85,15 @@ export async function consume(): Promise<void> {
     console.log('Consumer got message from', id, ':', payload)
   })
 
-  const { send } = await consumer.consume({
+  await consumer.consume({
     payloadDecoder: decoder,
     payloadEncoder: encoder,
     transport,
   })
 
-  await send(new TextEncoder().encode('👋'))
+  console.log('Secure tunnel established with', consumer.providerId)
+
+  // await send(new TextEncoder().encode('👋 from consumer'))
 }
 
 // 🛠️
@@ -113,12 +123,18 @@ document.addEventListener('DOMContentLoaded', () => {
       .catch(console.error)
   }
 
-  const onConsumeClick = (event: Event): void => {
-    consume()
-      .then(() => event.target?.removeEventListener('click', onConsumeClick))
-      .catch(console.error)
-  }
-
   document.querySelector('#provide')?.addEventListener('click', onProvideClick)
-  document.querySelector('#consume')?.addEventListener('click', onConsumeClick)
+
+  const url = new URL(location.href)
+  const challenge = url.searchParams.get('challenge')
+  const publicKey = url.searchParams.get('publicKey')
+
+  if (challenge !== null && publicKey !== null) {
+    document.querySelector('#provide')?.setAttribute('disabled', 'disabled')
+
+    consume({
+      challenge,
+      publicKey,
+    }).catch(console.error)
+  }
 })

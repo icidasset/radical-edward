@@ -101,7 +101,9 @@ export class ProviderSession<Payload> extends Session<MaakePayload<Payload>> {
           tunnelPayload: undefined,
         },
       })
-      .catch(console.error)
+      .catch((error) => {
+        throw error
+      })
   }
 }
 

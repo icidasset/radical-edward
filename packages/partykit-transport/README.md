@@ -1,22 +1,26 @@
-# MAAKE-OOB
+# Partykit Transport
 
-[![npm (scoped)](https://img.shields.io/npm/v/maake-oob)](https://www.npmjs.com/package/maake-oob)
+[![npm (scoped)](https://img.shields.io/npm/v/partykit-transport)](https://www.npmjs.com/package/partykit-transport)
 
-A mutually authenticating AKE that uses out-of-band parameters to authenticate the other party.
-
-## Features
-
--
+A `Transport` implementation for the [@fission-codes/channel](https://github.com/fission-codes/stack/tree/main/packages/channel) library.
 
 ## Installation
 
 ```bash
-pnpm install maake-oob
+pnpm install partykit-transport
 ```
 
 ## Usage
 
-TODO
+```js
+const _transport = new Transport({
+  peerId: 'example-id',
+  room: 'example-room',
+  host: 'partykit-host.address',
+})
+
+// Pass `transport` to a new `Channel` or something else.
+```
 
 ## Docs
 

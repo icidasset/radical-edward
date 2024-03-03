@@ -1,6 +1,4 @@
 import type * as T from '@fission-codes/channel/types'
-import type { Jsonifiable } from 'type-fest'
-
 import * as C from '@fission-codes/channel'
 
 import {
@@ -32,7 +30,7 @@ export type Service<Payload> = T.Service<
   Array<T.IO<Msg<Payload>, Msg<Payload>>>,
   Msg<Payload>
 >
-export type TransportDataType = Jsonifiable
+export type TransportDataType = any
 
 export type PayloadDecoder<Payload> = (data: Uint8Array) => Payload
 export type PayloadEncoder<Payload> = (payload: Payload) => Uint8Array
@@ -89,20 +87,22 @@ class ChannelCodec<Payload> implements Codec<Payload> {
 
     return {
       id: data.id,
-      data: json,
+      data: JSON.stringify(json),
     }
   }
 
   #decodeError(error: string, cause: any): { data: { error: Error } } {
     return {
       data: {
-        error: new Error(error, { cause }),
+        error: new Error('Decoding error', {
+          cause: new Error(error, { cause }),
+        }),
       },
     }
   }
 
   decode(data: TransportDataType): T.CodecDecoded<T.Result<Msg<Payload>>> {
-    const json = data
+    const json = JSON.parse(data as string)
 
     if (!isProperMessage(json)) {
       return this.#decodeError('Improperly formatted channel data.', json)
