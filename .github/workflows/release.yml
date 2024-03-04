@@ -28,7 +28,8 @@ jobs:
   npm:
     needs: release
     if: |
-      contains(fromJson(needs.release.outputs.paths_released), 'packages/maake-oob')
+      contains(fromJson(needs.release.outputs.paths_released), 'packages/maake-oob') ||
+      contains(fromJson(needs.release.outputs.paths_released), 'packages/partykit-transport')
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -52,5 +53,6 @@ jobs:
   docs:
     needs: release
     if: |
-      contains(fromJson(needs.release.outputs.paths_released), 'packages/maake-oob')
+      contains(fromJson(needs.release.outputs.paths_released), 'packages/maake-oob') ||
+      contains(fromJson(needs.release.outputs.paths_released), 'packages/partykit-transport')
     uses: ./.github/workflows/reusable-docs.yml

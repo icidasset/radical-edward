@@ -46,7 +46,8 @@
     ],
     "ignorePatterns": [
       ".github",
-      "docs"
+      "docs",
+      "packages/maake-oob/README.md"
     ]
   }
 }

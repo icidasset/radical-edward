@@ -2,6 +2,7 @@
   "separate-pull-requests": true,
   "release-type": "node",
   "packages": {
-    "packages/maake-oob": {}
+    "packages/maake-oob": {},
+    "packages/partykit-transport": {}
   }
 }

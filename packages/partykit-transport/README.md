@@ -2,7 +2,7 @@
 
 [![npm (scoped)](https://img.shields.io/npm/v/partykit-transport)](https://www.npmjs.com/package/partykit-transport)
 
-A `Transport` implementation for the [@fission-codes/channel](https://github.com/fission-codes/stack/tree/main/packages/channel) library.
+A `Transport` implementation for the [@fission-codes/channel](https://github.com/fission-codes/stack/tree/main/packages/channel) library which uses [partykit.io](https://partykit.io).
 
 ## Installation
 
@@ -18,8 +18,6 @@ const _transport = new Transport({
   room: 'example-room',
   host: 'partykit-host.address',
 })
-
-// Pass `transport` to a new `Channel` or something else.
 ```
 
 ## Docs

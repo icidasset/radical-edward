@@ -2,7 +2,7 @@
   "name": "partykit-transport",
   "type": "module",
   "version": "0.1.0",
-  "description": "A transport implementation for the @fission-codes/channel library.",
+  "description": "A transport implementation for the @fission-codes/channel library which uses partykit.io",
   "author": "Steven Vandevelde <icid.asset@gmail.com> (tokono.ma)",
   "license": "(Apache-2.0 AND MIT)",
   "homepage": "https://github.com/icidasset/radical-edward/tree/main/packages/partykit-transport",

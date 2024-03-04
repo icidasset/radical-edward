@@ -2,21 +2,113 @@
 
 [![npm (scoped)](https://img.shields.io/npm/v/maake-oob)](https://www.npmjs.com/package/maake-oob)
 
-A mutually authenticating AKE that uses out-of-band parameters to authenticate the other party.
-
-## Features
-
--
+Create a secure tunnel between two parties using a mutually authenticating AKE with out-of-band parameters.
 
 ## Installation
 
 ```bash
-pnpm install maake-oob
+npm install maake-oob
 ```
 
 ## Usage
 
-TODO
+First we set up the provider, the party who provides the out-of-band parameters.
+
+```js
+const provider = new Provider()
+```
+
+Both the provider and the consumer will need to share the same transport. This is a [`@fission-codes/channel`](https://www.npmjs.com/package/@fission-codes/channel) `Transport`. For example, here we use the [partykit-transport](https://www.npmjs.com/package/partykit-transport) which uses [partykit.io](https://partykit.io/) as the transport for the channel.
+
+```js
+const transport = new Transport({
+  peerId: provider.id,
+  room: provider.params.publicKey,
+  host: HOST,
+})
+```
+
+Listen for events on the provider side:
+
+```js
+provider.on('new-consumer', async ({ did, answer, send }) => {
+  console.log('Secure tunnel established with', did)
+})
+
+provider.on('message', async ({ did, msgId, payload }) => {
+  console.log('Provider got message from', did)
+})
+```
+
+Finish the provider setup & listen for handshake:
+
+```js
+await provider.provide({
+  payloadDecoder(encoded: Uint8Array): Payload { return payload },
+  payloadEncoder(payload: Payload): Uint8Array { return encoded },
+  transport,
+})
+```
+
+Now that that's done we need to get the out-of-band parameters to the other party somehow.
+One way to do that is by putting them in a URL:
+
+```js
+const url = new URL(location.href)
+url.searchParams.set('challenge', provider.params.challenge)
+url.searchParams.set('publicKey', provider.params.publicKey)
+url.toString()
+```
+
+You can use a QR code to get URL easily on a mobile device.
+Next, we extract the parameters from the URL and create a consumer with them.
+
+```js
+const url = new URL(location.href)
+const challenge = url.searchParams.get('challenge')
+const publicKey = url.searchParams.get('publicKey')
+
+const consumer = new Consumer(params)
+```
+
+Listen for events on the consumer side:
+
+```js
+consumer.on('message', ({ did, payload }) => {
+  console.log('Consumer got message from', did)
+})
+```
+
+Finish the consumer setup & initiate handshake (using the same arguments as with the provider):
+
+```js
+const { answer, send } = await consumer.consume({
+  payloadDecoder: decoder,
+  payloadEncoder: encoder,
+  transport,
+})
+```
+
+Once this `await` finishes, the secure tunnel is established.
+
+### Typescript
+
+The type of your payload should be passed to the provider and consumer constructors.
+
+```ts
+type Payload = string
+
+new Provider<Payload>()
+new Consumer<Payload>()
+
+function payloadDecoder(encoded: Uint8Array): Payload {
+  return new TextDecode().decode(encoded)
+}
+
+function payloadEncoder(payload: Payload): Uint8Array {
+  return new TextEncoder().encode(payload)
+}
+```
 
 ## Docs
 

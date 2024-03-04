@@ -71,6 +71,7 @@ export async function provide(): Promise<void> {
     }
   })
 
+  // Listen for handshakes
   await provider.provide({
     payloadDecoder: decoder,
     payloadEncoder: encoder,

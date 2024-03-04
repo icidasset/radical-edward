@@ -1,0 +1,32 @@
+name: partykit-transport Package
+env:
+  CI: true
+  FORCE_COLOR: 1
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'packages/partykit-transport/**'
+      - .github/workflows/partykit-transport.yml
+      - pnpm-lock.yaml
+  pull_request:
+    paths:
+      - 'packages/partykit-transport/**'
+      - .github/workflows/partykit-transport.yml
+      - pnpm-lock.yaml
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v3
+        with:
+          version: latest
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: pnpm
+      - run: pnpm install
+      - run: pnpm run build
+      - run: pnpm -r --filter partykit-transport run lint
+      - run: pnpm -r --filter partykit-transport run test
