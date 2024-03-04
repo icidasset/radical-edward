@@ -68,13 +68,13 @@ const url = new URL(location.href)
 const challenge = url.searchParams.get('challenge')
 const publicKey = url.searchParams.get('publicKey')
 
-const consumer = new Consumer(params)
+const consumer = new Consumer({ challenge, publicKey })
 ```
 
 Listen for events on the consumer side:
 
 ```js
-consumer.on('message', ({ did, payload }) => {
+consumer.on('message', ({ did, msgId, payload }) => {
   console.log('Consumer got message from', did)
 })
 ```

@@ -10,7 +10,7 @@ import QRCode from 'qrcode'
 
 // 🏔️
 
-const HOST = 'localhost:1999'
+const HOST = 'radical-party.icidasset.partykit.dev'
 
 // 🧩
 
