@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.1](https://github.com/icidasset/radical-edward/compare/maake-oob-v0.1.0...maake-oob-v0.1.1) (2024-03-04)
+
+
+### Bug Fixes
+
+* maake-oob docs typo ([c3e36c4](https://github.com/icidasset/radical-edward/commit/c3e36c44741be76ceb0a2ac06ea4a804026eb5b6))
+
 ## [0.1.0](https://github.com/icidasset/radical-edward/compare/maake-oob-v0.0.1...maake-oob-v0.1.0) (2024-03-04)
 
 
