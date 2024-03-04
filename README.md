@@ -11,7 +11,7 @@ Radical packages that can be used to make distributed web apps. While some are c
 
 ## Examples
 
-TODO.
+- [`demo`](https://github.com/icidasset/radical-edward/tree/main/examples/demo) - A simple demo of how the `maake-oob` and `partykit-transport` packages are used.
 
 ### Checkout examples
 
