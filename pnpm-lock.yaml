@@ -1,4 +1,4 @@
-lockfileVersion: '6.0'
+lockfileVersion: '6.1'
 
 settings:
   autoInstallPeers: true
@@ -140,8 +140,8 @@ importers:
         specifier: ^1.0.3
         version: 1.0.3
       partysocket:
-        specifier: ^1.0.0
-        version: 1.0.0
+        specifier: ^1.0.1
+        version: 1.0.1
     devDependencies:
       '@types/assert':
         specifier: ^1.5.10
@@ -4572,8 +4572,8 @@ packages:
       - utf-8-validate
     dev: false
 
-  /partysocket@1.0.0:
-    resolution: {integrity: sha512-qn6w+u51+bNsSIxMLYPME5GUm7R7uk5V831KZd/1iRFrZXT8jF19VfRk/nIgM1QkbhrRx20wDQGWsBygleIcyQ==}
+  /partysocket@1.0.1:
+    resolution: {integrity: sha512-sSnLf9X0Oaxw0wXp0liKho0QQqStDJB5I4ViaqmtI4nHm6cpb2kUealErPrcQpYUF6zgTHzLQhIO++2tcJc59A==}
     dependencies:
       event-target-shim: 6.0.2
     dev: false

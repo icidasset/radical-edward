@@ -39,7 +39,7 @@
   "dependencies": {
     "@fission-codes/channel": "^0.0.2",
     "emittery": "^1.0.3",
-    "partysocket": "^1.0.0"
+    "partysocket": "^1.0.1"
   },
   "devDependencies": {
     "@types/assert": "^1.5.10",
