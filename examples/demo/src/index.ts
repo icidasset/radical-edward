@@ -24,8 +24,8 @@ type Payload = Uint8Array
 export async function provide(): Promise<void> {
   const provider = new Provider<Payload>()
 
-  console.log('Providing', provider.params)
-  console.log('Waiting for a consumer')
+  log('Providing', JSON.stringify(provider.params))
+  log('Waiting for a consumer')
 
   const url = new URL(location.href)
   url.searchParams.set('challenge', provider.params.challenge)
@@ -36,7 +36,7 @@ export async function provide(): Promise<void> {
   if (qrCodeNode !== null) {
     qrCodeNode.innerHTML = `<img src="${qrCodeDataURL}" /><br /><a style="word-break: break-all;" href="${url.toString()}">${url.toString()}</a></br><button id="copy-url" style="margin-top: 1em; display: block;">Copy URL</button>`
     document.querySelector('#copy-url')?.addEventListener('click', () => {
-      navigator.clipboard.writeText(url.toString()).catch(console.error)
+      navigator.clipboard.writeText(url.toString()).catch(logError)
     })
   }
 
@@ -52,12 +52,12 @@ export async function provide(): Promise<void> {
   > = {}
 
   provider.on('new-consumer', async ({ did, answer, send }) => {
-    console.log('Secure tunnel established with', did)
+    log('Secure tunnel established with', did)
     consumers[did] = { did, answer, send }
   })
 
   provider.on('message', async ({ did, msgId, payload }) => {
-    console.log(
+    log(
       'Provider got message from',
       did,
       ':',
@@ -67,7 +67,7 @@ export async function provide(): Promise<void> {
     if (msgId === '👋') {
       consumers[did]
         ?.answer('👋', new TextEncoder().encode('🚀'))
-        ?.catch(console.error)
+        ?.catch(logError)
     }
   })
 
@@ -86,8 +86,8 @@ export async function provide(): Promise<void> {
  * @param params
  */
 export async function consume(params: OutOfBandParameters): Promise<void> {
-  console.log('Consuming', params)
-  console.log('Establishing secure tunnel')
+  log('Consuming', JSON.stringify(params))
+  log('Establishing secure tunnel')
 
   const consumer = new Consumer<Payload>(params)
   const transport = new Transport({
@@ -97,7 +97,7 @@ export async function consume(params: OutOfBandParameters): Promise<void> {
   })
 
   consumer.on('message', ({ did, payload }) => {
-    console.log(
+    log(
       'Consumer got message from',
       did,
       ':',
@@ -111,7 +111,7 @@ export async function consume(params: OutOfBandParameters): Promise<void> {
     transport,
   })
 
-  console.log('Secure tunnel established with', consumer.providerId)
+  log('Secure tunnel established with', consumer.providerId)
 
   const response = await send(
     '👋',
@@ -119,9 +119,9 @@ export async function consume(params: OutOfBandParameters): Promise<void> {
   )
 
   if (response.error === undefined) {
-    console.log('👋 result:', new TextDecoder().decode(response.result))
+    log('👋 result:', new TextDecoder().decode(response.result))
   } else {
-    console.error('👋 error:', response.error)
+    logError(response.error)
   }
 }
 
@@ -143,13 +143,40 @@ function encoder(payload: Payload): Uint8Array {
   return payload
 }
 
+/**
+ *
+ * @param args
+ */
+function log(...args: string[]): void {
+  console.log(...args)
+
+  const logItem = document.createElement('p')
+  logItem.innerHTML = args.join(' ')
+
+  document.querySelector('#log')?.append(logItem)
+}
+
+/**
+ *
+ * @param error
+ */
+function logError(error: Error): void {
+  console.error(error)
+
+  const logItem = document.createElement('p')
+  logItem.style.color = 'red'
+  logItem.innerHTML = error.message
+
+  document.querySelector('#log')?.append(logItem)
+}
+
 // 🚀
 
 document.addEventListener('DOMContentLoaded', () => {
   const onProvideClick = (event: Event): void => {
     provide()
       .then(() => event.target?.removeEventListener('click', onProvideClick))
-      .catch(console.error)
+      .catch(logError)
   }
 
   document.querySelector('#provide')?.addEventListener('click', onProvideClick)
@@ -164,6 +191,6 @@ document.addEventListener('DOMContentLoaded', () => {
     consume({
       challenge,
       publicKey,
-    }).catch(console.error)
+    }).catch(logError)
   }
 })
