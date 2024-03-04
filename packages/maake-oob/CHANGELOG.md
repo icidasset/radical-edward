@@ -1,0 +1,8 @@
+# Changelog
+
+## [0.1.0](https://github.com/icidasset/radical-edward/compare/maake-oob-v0.0.1...maake-oob-v0.1.0) (2024-03-04)
+
+
+### Features
+
+* initial release ([7ce3f6a](https://github.com/icidasset/radical-edward/commit/7ce3f6aa108a84aa2bcf66e94f1966a968a8aa80))
