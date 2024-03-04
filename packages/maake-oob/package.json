@@ -44,6 +44,7 @@
     "emittery": "^1.0.3",
     "iso-base": "^2.0.1",
     "multiformats": "^13.1.0",
+    "type-fest": "^4.10.3",
     "uint8arrays": "^5.0.2"
   },
   "devDependencies": {

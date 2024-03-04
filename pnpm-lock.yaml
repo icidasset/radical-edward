@@ -102,6 +102,9 @@ importers:
       multiformats:
         specifier: ^13.1.0
         version: 13.1.0
+      type-fest:
+        specifier: ^4.10.3
+        version: 4.10.3
       uint8arrays:
         specifier: ^5.0.2
         version: 5.0.2

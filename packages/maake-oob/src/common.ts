@@ -20,11 +20,9 @@ export const INITIAL_NONCE = new Uint8Array(0)
 // 🧩️
 
 export type Cipher = ReturnType<typeof xchacha20poly1305>
-export type Step = 'handshake' | 'query' | 'fin'
 
-export interface StepResult {
-  nextStep: Step
-}
+export type PayloadDecoder<Payload> = (data: Uint8Array) => Payload
+export type PayloadEncoder<Payload> = (payload: Payload) => Uint8Array
 
 // 🛠️
 
