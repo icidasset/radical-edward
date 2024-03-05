@@ -113,13 +113,11 @@ export abstract class Session<Payload> {
     fulfillRequest,
     msgId,
     payload,
-    step,
     timeout,
   }: {
     fulfillRequest: boolean
     msgId: string
     payload: MaakePayload<Payload>
-    step: string
     timeout?: number
   }): Promise<Result<MaakePayload<Payload>>> {
     const response = await this.config.channel.request(
@@ -128,7 +126,6 @@ export abstract class Session<Payload> {
         encryptedPayload: this.#encodeAndEncrypt(payload),
         fulfillRequest,
         msgId,
-        step,
       },
       timeout
     )
@@ -147,7 +144,6 @@ export abstract class Session<Payload> {
   }
 
   async answer(
-    step: string,
     msgId: string,
     payload: MaakePayload<Payload>,
     timeout?: number
@@ -156,13 +152,11 @@ export abstract class Session<Payload> {
       fulfillRequest: true,
       msgId,
       payload,
-      step,
       timeout,
     })
   }
 
   async send(
-    step: string,
     msgId: string,
     payload: MaakePayload<Payload>,
     timeout?: number
@@ -171,7 +165,6 @@ export abstract class Session<Payload> {
       fulfillRequest: false,
       msgId,
       payload,
-      step,
       timeout,
     })
   }
@@ -182,7 +175,7 @@ export abstract class Session<Payload> {
     msg: Channel.Msg
   ): Promise<
     | { admissible: false; reason: string }
-    | { admissible: true; payload: MaakePayload<Payload> }
+    | { admissible: true; payload: MaakePayload<Payload>; handshake: boolean }
   > {
     if (msg.did !== this.config.remoteDID)
       return {
@@ -190,25 +183,17 @@ export abstract class Session<Payload> {
         reason: 'DID did not match the remote peer DID.',
       }
 
-    switch (msg.step) {
-      case 'handshake': {
-        const payload = this.#decryptAndDecode(msg.encryptedPayload)
-        await this.handshake(msg, payload)
-        this.#handshakeCompleted = true
-        return { admissible: true, payload }
-      }
-    }
-
     if (this.#handshakeCompleted)
       return {
         admissible: true,
+        handshake: false,
         payload: this.#decryptAndDecode(msg.encryptedPayload),
       }
 
-    return {
-      admissible: false,
-      reason: 'Handshake not completed yet.',
-    }
+    const payload = this.#decryptAndDecode(msg.encryptedPayload)
+    await this.handshake(msg, payload)
+    this.#handshakeCompleted = true
+    return { admissible: true, handshake: true, payload }
   }
 
   abstract handshake(
@@ -247,7 +232,7 @@ export class ProviderSession<Payload> extends Session<Payload> {
       throw new Error(`Challenge failed during handshake with ${msg.did}`)
     }
 
-    this.answer('handshake', msg.did, {
+    this.answer(msg.did, {
       handshake: { approved: true },
     }).catch((error) => {
       throw error

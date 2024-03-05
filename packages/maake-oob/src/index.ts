@@ -113,7 +113,7 @@ export class Provider<Payload> extends Emittery<ProviderEvents<Payload>> {
       if (!result.admissible) return
 
       // Handshake approved
-      if (msg.step === 'handshake') {
+      if (result.handshake) {
         await this.emit('new-consumer', {
           did: msg.did,
           answer: answerFn(session),
@@ -224,7 +224,7 @@ export class Consumer<Payload> extends Emittery<ConsumerEvents<Payload>> {
     })
 
     // Initiate handshake
-    const response = await session.send('handshake', this.#did, {
+    const response = await session.send(this.#did, {
       handshake: {
         challenge: this.#outOfBandParameters.challenge,
       },
@@ -265,12 +265,7 @@ function answerFn<Payload>(session: Session<Payload>) {
     payload: Payload,
     timeout?: number
   ): Promise<Result<Payload>> => {
-    const response = await session.answer(
-      'tunnel',
-      msgId,
-      { tunnel: payload },
-      timeout
-    )
+    const response = await session.answer(msgId, { tunnel: payload }, timeout)
 
     if (response.error === undefined) {
       if (response.result.tunnel === undefined)
@@ -292,12 +287,7 @@ function sendFn<Payload>(session: Session<Payload>) {
     payload: Payload,
     timeout?: number
   ): Promise<Result<Payload>> => {
-    const response = await session.send(
-      'tunnel',
-      msgId,
-      { tunnel: payload },
-      timeout
-    )
+    const response = await session.send(msgId, { tunnel: payload }, timeout)
 
     if (response.error === undefined) {
       if (response.result.tunnel === undefined)

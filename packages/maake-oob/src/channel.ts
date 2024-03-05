@@ -8,7 +8,6 @@ export interface Msg {
   encryptedPayload: string
   fulfillRequest: boolean
   msgId: string
-  step: string
 }
 
 export type Channel = C.Channel<Codec, Service>
@@ -84,7 +83,6 @@ function isProperMessage(x: unknown): x is {
   encryptedPayload: string
   fulfillRequest: boolean
   msgId: string
-  step: string
 } {
   return (
     typeof x === 'object' &&
@@ -93,10 +91,8 @@ function isProperMessage(x: unknown): x is {
     'encryptedPayload' in x &&
     'fulfillRequest' in x &&
     'msgId' in x &&
-    'step' in x &&
     typeof x.did === 'string' &&
     typeof x.fulfillRequest === 'boolean' &&
-    typeof x.msgId === 'string' &&
-    typeof x.step === 'string'
+    typeof x.msgId === 'string'
   )
 }
