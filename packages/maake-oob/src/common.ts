@@ -10,11 +10,7 @@ import { x25519 } from '@noble/curves/ed25519'
 // 🏔️️
 
 export const CIPHER_TEXT_ENCODING = 'base64url'
-export const DOMAIN_SEPARATION_TAG = Uint8Arrays.fromString(
-  'oddjs-qr-code',
-  'utf8'
-)
-
+export const DOMAIN_SEPARATION_TAG = Uint8Arrays.fromString('maake-oob', 'utf8')
 export const INITIAL_NONCE = new Uint8Array(0)
 
 // 🧩️
