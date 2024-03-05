@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.3](https://github.com/icidasset/radical-edward/compare/maake-oob-v0.1.2...maake-oob-v0.1.3) (2024-03-05)
+
+
+### Bug Fixes
+
+* Reduce dependencies ([e2307e1](https://github.com/icidasset/radical-edward/commit/e2307e1ed147d26595b0328935b1a1c44c014a2d))
+
 ## [0.1.2](https://github.com/icidasset/radical-edward/compare/maake-oob-v0.1.1...maake-oob-v0.1.2) (2024-03-05)
 
 

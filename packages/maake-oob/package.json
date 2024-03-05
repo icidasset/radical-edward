@@ -1,7 +1,7 @@
 {
   "name": "maake-oob",
   "type": "module",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Create a secure tunnel between two parties using a mutually authenticating AKE with out-of-band parameters.",
   "author": "Steven Vandevelde <icid.asset@gmail.com> (tokono.ma)",
   "license": "(Apache-2.0 AND MIT)",
