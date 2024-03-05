@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.4](https://github.com/icidasset/radical-edward/compare/maake-oob-v0.1.3...maake-oob-v0.1.4) (2024-03-05)
+
+
+### Bug Fixes
+
+* Remove step from channel payload ([af22970](https://github.com/icidasset/radical-edward/commit/af22970a38e277928b0dc2f508ac58501ecbb979))
+
 ## [0.1.3](https://github.com/icidasset/radical-edward/compare/maake-oob-v0.1.2...maake-oob-v0.1.3) (2024-03-05)
 
 
