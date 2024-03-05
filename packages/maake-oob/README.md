@@ -98,6 +98,22 @@ const { answer, send } = await consumer.consume({
 ```
 
 Once this `await` finishes, the secure tunnel is established.
+Now you can `send` & `answer` messages.
+
+```js
+// Consumer
+const response = await send(messageId, payloadThatWillBeEncodedAndEncrypted)
+
+if (response.error) {
+  throw response.error
+} else {
+  const decryptedAndDecoded = response.result
+}
+
+// Producer:
+//   You can get the `msgId` from the message event.
+answer(sameMessageIdTheConsumerUsed, anotherPayload)
+```
 
 ### Typescript
 
