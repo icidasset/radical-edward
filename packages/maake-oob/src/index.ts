@@ -1,18 +1,14 @@
 import type { Result, Transport } from '@fission-codes/channel/types'
 
-import * as Uint8Arrays from 'uint8arrays'
+import { base58btc } from 'iso-base/base-x'
+import { base64url } from 'iso-base/rfc4648'
 import { x25519 } from '@noble/curves/ed25519'
 import { randomBytes } from 'iso-base/crypto'
 import { tag } from 'iso-base/varint'
-import { base58btc } from 'multiformats/bases/base58'
 import Emittery from 'emittery'
 
 import * as Channel from './channel'
-import {
-  CIPHER_TEXT_ENCODING,
-  type PayloadDecoder,
-  type PayloadEncoder,
-} from './common'
+import { type PayloadDecoder, type PayloadEncoder } from './common'
 import { ConsumerSession, ProviderSession, type Session } from './session'
 
 // TYPES
@@ -77,8 +73,8 @@ export class Provider<Payload> extends Emittery<ProviderEvents<Payload>> {
 
   get params(): OutOfBandParameters {
     return {
-      challenge: Uint8Arrays.toString(this.#challenge, CIPHER_TEXT_ENCODING),
-      publicKey: Uint8Arrays.toString(this.#publicKey, CIPHER_TEXT_ENCODING),
+      challenge: base64url.encode(this.#challenge),
+      publicKey: base64url.encode(this.#publicKey),
     }
   }
 
@@ -172,11 +168,7 @@ export class Consumer<Payload> extends Emittery<ConsumerEvents<Payload>> {
     this.#publicKey = x25519.getPublicKey(this.#privateKey)
     this.#did = publicKeyToDid(this.#publicKey)
 
-    this.#remotePublicKey = Uint8Arrays.fromString(
-      outOfBandParameters.publicKey,
-      CIPHER_TEXT_ENCODING
-    )
-
+    this.#remotePublicKey = base64url.decode(outOfBandParameters.publicKey)
     const encodedRemotePublicKey = base58btc.encode(
       tag(0xec, this.#remotePublicKey)
     )

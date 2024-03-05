@@ -1,4 +1,4 @@
-lockfileVersion: '6.1'
+lockfileVersion: '6.0'
 
 settings:
   autoInstallPeers: true
@@ -44,9 +44,6 @@ importers:
       '@fission-codes/channel':
         specifier: ^0.0.2
         version: 0.0.2
-      emittery:
-        specifier: ^1.0.3
-        version: 1.0.3
       maake-oob:
         specifier: '*'
         version: link:../../packages/maake-oob
@@ -59,12 +56,6 @@ importers:
       qrcode:
         specifier: ^1.5.3
         version: 1.5.3
-      type-fest:
-        specifier: ^4.11.0
-        version: 4.11.0
-      uint8arrays:
-        specifier: ^5.0.2
-        version: 5.0.2
     devDependencies:
       '@types/node':
         specifier: ^20.11.0
@@ -99,15 +90,6 @@ importers:
       iso-base:
         specifier: ^2.0.1
         version: 2.0.1
-      multiformats:
-        specifier: ^13.1.0
-        version: 13.1.0
-      type-fest:
-        specifier: ^4.11.0
-        version: 4.11.0
-      uint8arrays:
-        specifier: ^5.0.2
-        version: 5.0.2
     devDependencies:
       '@types/assert':
         specifier: ^1.5.10
@@ -4284,10 +4266,6 @@ packages:
     resolution: {integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==}
     dev: true
 
-  /multiformats@13.1.0:
-    resolution: {integrity: sha512-HzdtdBwxsIkzpeXzhQ5mAhhuxcHbjEHH+JQoxt7hG/2HGFjjwyolLo7hbaexcnhoEuV4e0TNJ8kkpMjiEYY4VQ==}
-    dev: false
-
   /multimatch@5.0.0:
     resolution: {integrity: sha512-ypMKuglUrZUD99Tk2bUQ+xNQj43lPEfAeX2o9cTteAmShXy2VHDJpuwu1o0xqoKCt9jLVAvwyFKdLTPXKAfJyA==}
     engines: {node: '>=10'}
@@ -5478,11 +5456,6 @@ packages:
     engines: {node: '>=14.16'}
     dev: true
 
-  /type-fest@4.11.0:
-    resolution: {integrity: sha512-DPsoHKtnCUqqoB5Y4OPyat7ObSLz1XOkhHTmz+gOkz2p1xs+BBneTvHWriTwc313eozfBWh8b45EpaV3ZrrPPQ==}
-    engines: {node: '>=16'}
-    dev: false
-
   /typed-array-buffer@1.0.0:
     resolution: {integrity: sha512-Y8KTSIglk9OZEr8zywiIHG/kmQ7KWyjseXs1CbSo8vC42w7hg2HgYTxSWwP0+is7bWDc1H+Fo026CpHFwm8tkw==}
     engines: {node: '>= 0.4'}
@@ -5569,12 +5542,6 @@ packages:
     engines: {node: '>=14.17'}
     hasBin: true
     dev: true
-
-  /uint8arrays@5.0.2:
-    resolution: {integrity: sha512-S0GaeR+orZt7LaqzTRs4ZP8QqzAauJ+0d4xvP2lJTA99jIkKsE2FgDs4tGF/K/z5O9I/2W5Yvrh7IuqNeYH+0Q==}
-    dependencies:
-      multiformats: 13.1.0
-    dev: false
 
   /unbox-primitive@1.0.2:
     resolution: {integrity: sha512-61pPlCD9h51VoreyJ0BReideM3MDKMKnh6+V9L08331ipq6Q8OFXZYiqP6n/tbHx4s5I9uRhcye6BrbkizkBDw==}

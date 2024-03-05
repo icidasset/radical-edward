@@ -1,16 +1,16 @@
-import * as Uint8Arrays from 'uint8arrays'
-
-import { base58btc } from 'multiformats/bases/base58'
 import { hkdf } from '@noble/hashes/hkdf'
 import { sha256 } from '@noble/hashes/sha256'
 import { varint } from 'iso-base/varint'
 import { xchacha20poly1305 } from '@noble/ciphers/chacha'
 import { x25519 } from '@noble/curves/ed25519'
+import { base58btc } from 'iso-base/base-x'
+import { base64url } from 'iso-base/rfc4648'
+import { utf8 } from 'iso-base/utf8'
+import { concat } from 'iso-base/utils'
 
 // 🏔️️
 
-export const CIPHER_TEXT_ENCODING = 'base64url'
-export const DOMAIN_SEPARATION_TAG = Uint8Arrays.fromString('maake-oob', 'utf8')
+export const DOMAIN_SEPARATION_TAG = utf8.decode('maake-oob')
 export const INITIAL_NONCE = new Uint8Array(0)
 
 // 🧩️
@@ -32,9 +32,7 @@ export function decryptPayload(
   cipher: Cipher,
   encryptedPayload: string
 ): Uint8Array {
-  return cipher.decrypt(
-    Uint8Arrays.fromString(encryptedPayload, CIPHER_TEXT_ENCODING)
-  )
+  return cipher.decrypt(base64url.decode(encryptedPayload))
 }
 
 /**
@@ -44,7 +42,7 @@ export function decryptPayload(
  * @param payload
  */
 export function encryptPayload(cipher: Cipher, payload: Uint8Array): string {
-  return Uint8Arrays.toString(cipher.encrypt(payload), CIPHER_TEXT_ENCODING)
+  return base64url.encode(cipher.encrypt(payload))
 }
 
 /**
@@ -77,11 +75,7 @@ export function makeCipher({
     sha256,
     sharedSecret,
     providerPublicKey,
-    Uint8Arrays.concat([
-      DOMAIN_SEPARATION_TAG,
-      Uint8Arrays.fromString(':', 'utf8'),
-      hashedNonce,
-    ]),
+    concat([DOMAIN_SEPARATION_TAG, utf8.decode(':'), hashedNonce]),
     32 + 24 + hashedNonce.length // length = ChaCha key + IV + next-nonce
   )
 

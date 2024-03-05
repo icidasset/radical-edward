@@ -1,9 +1,11 @@
 import type { Result } from '@fission-codes/channel/types'
 
-import * as Uint8Arrays from 'uint8arrays'
+import { base64, base64url } from 'iso-base/rfc4648'
+import { utf8 } from 'iso-base/utf8'
+import { equals } from 'iso-base/utils'
 
+import type * as Channel from './channel'
 import {
-  CIPHER_TEXT_ENCODING,
   type Cipher,
   INITIAL_NONCE,
   type PayloadDecoder,
@@ -13,7 +15,6 @@ import {
   makeCipher,
   publicKeyFromDID,
 } from './common'
-import type * as Channel from './channel'
 
 // 🧩
 
@@ -58,7 +59,7 @@ export abstract class Session<Payload> {
 
   #decryptAndDecode(data: string): MaakePayload<Payload> {
     const bytes = decryptPayload(this.#makeCipher(), data)
-    const obj = JSON.parse(Uint8Arrays.toString(bytes, 'utf8'))
+    const obj = JSON.parse(utf8.encode(bytes))
 
     if (
       typeof obj === 'object' &&
@@ -76,9 +77,7 @@ export abstract class Session<Payload> {
       typeof obj.tunnel === 'string'
     ) {
       return {
-        tunnel: this.config.payloadDecoder(
-          Uint8Arrays.fromString(obj.tunnel as string, 'base64')
-        ),
+        tunnel: this.config.payloadDecoder(base64.decode(obj.tunnel as string)),
       }
     }
 
@@ -89,18 +88,10 @@ export abstract class Session<Payload> {
     const json = JSON.stringify(
       payload.tunnel === undefined
         ? { handshake: JSON.stringify(payload.handshake) }
-        : {
-            tunnel: Uint8Arrays.toString(
-              this.config.payloadEncoder(payload.tunnel),
-              'base64'
-            ),
-          }
+        : { tunnel: base64.encode(this.config.payloadEncoder(payload.tunnel)) }
     )
 
-    return encryptPayload(
-      this.#makeCipher(),
-      Uint8Arrays.fromString(json, 'utf8')
-    )
+    return encryptPayload(this.#makeCipher(), utf8.decode(json))
   }
 
   #makeCipher(): Cipher {
@@ -250,10 +241,7 @@ export class ProviderSession<Payload> extends Session<Payload> {
       handshake !== undefined &&
       'challenge' in handshake &&
       typeof handshake.challenge === 'string' &&
-      Uint8Arrays.equals(
-        Uint8Arrays.fromString(handshake.challenge, CIPHER_TEXT_ENCODING),
-        this.#challenge
-      )
+      equals(base64url.decode(handshake.challenge), this.#challenge)
 
     if (!hasCorrectChallenge) {
       throw new Error(`Challenge failed during handshake with ${msg.did}`)

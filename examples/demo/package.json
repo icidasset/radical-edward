@@ -16,13 +16,10 @@
   },
   "dependencies": {
     "@fission-codes/channel": "^0.0.2",
-    "emittery": "^1.0.3",
     "maake-oob": "*",
     "partykit": "^0.0.97",
     "partykit-transport": "*",
-    "qrcode": "^1.5.3",
-    "type-fest": "^4.11.0",
-    "uint8arrays": "^5.0.2"
+    "qrcode": "^1.5.3"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",
