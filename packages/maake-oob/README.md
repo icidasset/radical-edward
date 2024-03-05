@@ -4,6 +4,14 @@
 
 Create a secure tunnel between two parties using a mutually authenticating AKE with out-of-band parameters.
 
+## Cryptography
+
+- X25519 to establish a shared secret.
+- SHA256 to hash the rotating nonce.
+- HKDF to derive stronger key material.
+- XChaCha20-Poly1305 as the AEAD constructor.
+- Random 128-bit challenge.
+
 ## Installation
 
 ```bash
