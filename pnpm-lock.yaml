@@ -1,4 +1,4 @@
-lockfileVersion: '6.0'
+lockfileVersion: '6.1'
 
 settings:
   autoInstallPeers: true
@@ -88,8 +88,8 @@ importers:
         specifier: ^1.0.3
         version: 1.0.3
       iso-base:
-        specifier: ^2.0.1
-        version: 2.0.1
+        specifier: ^3.0.0
+        version: 3.0.0
     devDependencies:
       '@types/assert':
         specifier: ^1.5.10
@@ -3802,8 +3802,8 @@ packages:
   /isexe@2.0.0:
     resolution: {integrity: sha512-RHxMLp9lnKHGHRng9QFhRCMbYAcVpn69smSGcq3f36xjgVVWThj4qqLbTLlq7Ssj8B+fIQ1EuCEGI2lKsyQeIw==}
 
-  /iso-base@2.0.1:
-    resolution: {integrity: sha512-ip0nUW9oZP+LG6mslSgdJPt9NWZOq1qIOKpoUIdm8sq/87VwY8WZXw9ptCkhdJclY+r4feFbZuu9P/OFDqCvkQ==}
+  /iso-base@3.0.0:
+    resolution: {integrity: sha512-6+6r3X0lFZTyjE9a72KMtBcJdM7xRdyJTNBFNNrza+12w1s081lqf/Cz8zCOgl4+wM7Rj7poQX3c/aeJS/wTkQ==}
     dependencies:
       base-x: 4.0.0
       bigint-mod-arith: 3.3.1
