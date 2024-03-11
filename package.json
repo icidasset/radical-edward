@@ -21,7 +21,7 @@
     "docs": "typedoc --out docs --plugin typedoc-plugin-missing-exports --plugin typedoc-plugin-zod --plugin typedoc-plugin-rename-defaults"
   },
   "devDependencies": {
-    "@fission-codes/eslint-config": "^0.1.0",
+    "@fission-codes/eslint-config": "^0.1.1",
     "depcheck": "^1.4.7",
     "lint-staged": "^15.2.2",
     "prettier": "^3.2.5",
