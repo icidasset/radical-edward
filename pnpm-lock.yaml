@@ -1,4 +1,4 @@
-lockfileVersion: '6.0'
+lockfileVersion: '6.1'
 
 settings:
   autoInstallPeers: true
@@ -48,8 +48,8 @@ importers:
         specifier: '*'
         version: link:../../packages/maake-oob
       partykit:
-        specifier: ^0.0.97
-        version: 0.0.97
+        specifier: ^0.0.99
+        version: 0.0.99
       partykit-transport:
         specifier: '*'
         version: link:../../packages/partykit-transport
@@ -4533,8 +4533,8 @@ packages:
     engines: {node: '>=0.10.0'}
     dev: true
 
-  /partykit@0.0.97:
-    resolution: {integrity: sha512-KBYNHuSGjbRo1lVDuHvb4nrL4nqfAY+Ug2T+uDkzC2gYKMAE6AXOzNqb3P3x05lROCNVyVFDHpu79bTgbCevAw==}
+  /partykit@0.0.99:
+    resolution: {integrity: sha512-jmU2iIElilACNFMDigtT3s670Ty/mlQYk0u2oT+QEJq/UM3Zul7A7aEuec+KJJ8D7S9dwcMipNa08Zp2xeFWmQ==}
     hasBin: true
     dependencies:
       '@cloudflare/workers-types': 4.20240222.0

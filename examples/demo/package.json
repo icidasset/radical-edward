@@ -18,7 +18,7 @@
   "dependencies": {
     "@fission-codes/channel": "^0.0.2",
     "maake-oob": "*",
-    "partykit": "^0.0.97",
+    "partykit": "^0.0.99",
     "partykit-transport": "*",
     "qrcode": "^1.5.3"
   },
