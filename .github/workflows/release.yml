@@ -29,7 +29,8 @@ jobs:
     needs: release
     if: |
       contains(fromJson(needs.release.outputs.paths_released), 'packages/maake-oob') ||
-      contains(fromJson(needs.release.outputs.paths_released), 'packages/partykit-transport')
+      contains(fromJson(needs.release.outputs.paths_released), 'packages/partykit-transport') ||
+      contains(fromJson(needs.release.outputs.paths_released), 'packages/w3-wnfs')
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -54,5 +55,6 @@ jobs:
     needs: release
     if: |
       contains(fromJson(needs.release.outputs.paths_released), 'packages/maake-oob') ||
-      contains(fromJson(needs.release.outputs.paths_released), 'packages/partykit-transport')
+      contains(fromJson(needs.release.outputs.paths_released), 'packages/partykit-transport') ||
+      contains(fromJson(needs.release.outputs.paths_released), 'packages/w3-wnfs')
     uses: ./.github/workflows/reusable-docs.yml

@@ -7,11 +7,13 @@ Radical packages that can be used to make distributed web apps. While some are c
 ## Packages
 
 - [maake-oob](https://github.com/icidasset/radical-edward/tree/main/packages/maake-oob) - Create a secure tunnel between two parties using a mutually authenticating AKE with out-of-band parameters.
-- [partykit-transport](https://github.com/icidasset/radical-edward/tree/main/packages/partykit-transport) - A transport implementation for the @fission-codes/channel library which uses partykit.io
+- [partykit-transport](https://github.com/icidasset/radical-edward/tree/main/packages/partykit-transport) - A transport implementation for the @fission-codes/channel library which uses [partykit.io](https://partykit.io).
+- [w3-wnfs](https://github.com/icidasset/radical-edward/tree/main/packages/w3-wnfs) - Provides the necessary components to use WNFS with Web3Storage.
 
 ## Examples
 
 - [`demo`](https://github.com/icidasset/radical-edward/tree/main/examples/demo) - A simple demo of how the `maake-oob` and `partykit-transport` packages are used.
+- [`w3-wnfs`](https://github.com/icidasset/radical-edward/tree/main/examples/w3-wnfs) - An example app that shows how to store a WNFS on Web3Storage using the `@wnfs-wg/nest` package and some of the packages from this repo.
 
 ### Checkout examples
 
