@@ -1,0 +1,32 @@
+name: w3-wnfs Package
+env:
+  CI: true
+  FORCE_COLOR: 1
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'packages/w3-wnfs/**'
+      - .github/workflows/w3-wnfs.yml
+      - pnpm-lock.yaml
+  pull_request:
+    paths:
+      - 'packages/w3-wnfs/**'
+      - .github/workflows/w3-wnfs.yml
+      - pnpm-lock.yaml
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v3
+        with:
+          version: latest
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: pnpm
+      - run: pnpm install
+      - run: pnpm run build
+      - run: pnpm -r --filter w3-wnfs run lint
+      - run: pnpm -r --filter w3-wnfs run test
