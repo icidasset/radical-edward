@@ -70,7 +70,7 @@ importers:
         specifier: ^5.2.6
         version: 5.2.6(@types/node@20.11.24)
 
-  examples/w3s-wnfs:
+  examples/w3-wnfs:
     dependencies:
       '@picocss/pico':
         specifier: ^2.0.6
