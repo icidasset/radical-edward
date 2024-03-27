@@ -1,4 +1,4 @@
-import type { Blockstore } from 'interface-blockstore'
+import type { Blockstore } from 'w3-wnfs'
 import type { Client } from '@web3-storage/w3up-client/types'
 
 import { CID, FileSystem, Path } from '@wnfs-wg/nest'
@@ -28,6 +28,8 @@ export async function load({
   const dataRoot = await Pointer.lookup({ client })
   const storedKey = await Keys.lookup({ path: privatePath })
 
+  console.log(dataRoot, storedKey)
+
   // Create or load file system
   const fs =
     dataRoot === undefined
@@ -40,8 +42,10 @@ export async function load({
       path: Path.root(),
     })
 
-    // This will also trigger a commit + publish
+    const dataRoot = await fs.calculateDataRoot()
+
     await Keys.save({ key: capsuleKey, path: Path.root() })
+    await Pointer.saveLocally({ dataRoot })
   } else {
     await fs.mountPrivateNode({
       path: privatePath,
@@ -100,13 +104,17 @@ export const Pointer = {
   },
 
   async lookup({ client }: { client: Client }): Promise<CID | undefined> {
-    if (navigator.onLine) return await W3_WNFS.Pointer.lookup({ client })
+    const remote = navigator.onLine
+      ? await W3_WNFS.Pointer.lookup({ client })
+      : undefined
+    if (remote !== undefined) return remote
     const value = await IDB.get(this.LOCAL_NAME)
     if (typeof value === 'string') return CID.parse(value)
     return undefined
   },
 
   async saveLocally({ dataRoot }: { dataRoot: CID }): Promise<void> {
+    console.log(this.LOCAL_NAME, dataRoot)
     await IDB.set(this.LOCAL_NAME, dataRoot.toString())
   },
 

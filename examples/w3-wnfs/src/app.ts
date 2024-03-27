@@ -1,9 +1,8 @@
 import '@picocss/pico/css/pico.min.css'
 
 import type * as w3up from '@web3-storage/w3up-client'
-import type { Blockstore } from 'interface-blockstore'
+import type { Blockstore, Tracker } from 'w3-wnfs'
 import type { SharedSpace } from '@web3-storage/w3up-client/space'
-import { type Tracker } from 'w3-wnfs'
 
 import * as Delegation from '@ucanto/core/delegation'
 import * as Ucanto from '@ucanto/core'

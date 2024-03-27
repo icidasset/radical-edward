@@ -96,8 +96,11 @@ async function storePointerLocally(dataRoot: CID): Promise<void> {
 }
 
 async function lookupPointer(): Promise<CID | undefined> {
-  if (navigator.onLine) return await W3_WNFS.Pointer.lookup({ client })
-  const value = await IDB.get('data-root')
+  const remote = navigator.onLine
+    ? await W3_WNFS.Pointer.lookup({ client })
+    : undefined
+  if (remote !== undefined) return remote
+  const value = await IDB.get(this.LOCAL_NAME)
   if (typeof value === 'string') return CID.parse(value)
   return undefined
 }
