@@ -6,13 +6,14 @@ Provides the necessary components to use WNFS with [Web3Storage](https://web3.st
 
 ## Features
 
-- Blockstore that stores on and fetches from Web3Storage.
+- Blockstore that fetches from the `w3s.link` IPFS gateway.
 - Tracking of changed blocks, so you know what to upload to W3S.
+- Blockstore uses the tracker + a `flush` function to store the tracked blocks on W3S.
 - Data root (root CID) management using uploads.
 
 ## How it works
 
-The tracker tracks all the new blocks that Web3Storage doesn't have yet. These blocks are then **stored** on W3S when you call `Blockstore.flush()`. The root CID that contains all those blocks is called the data root, which is registered as an **upload** when `Pointer.save()` is called.
+The tracker tracks all the new blocks that Web3Storage doesn't have yet. These blocks are then **stored** on W3S when you call `blockstore.flush()`. The root CID that contains all those blocks is called the data root, which is registered as an **upload** when `Pointer.save()` is called.
 
 Each time a new upload is registered, the old ones are removed; because there's currently no way to identify a particular upload.
 
