@@ -28,8 +28,6 @@ export async function load({
   const dataRoot = await Pointer.lookup({ client })
   const storedKey = await Keys.lookup({ path: privatePath })
 
-  console.log(dataRoot, storedKey)
-
   // Create or load file system
   const fs =
     dataRoot === undefined
@@ -114,7 +112,6 @@ export const Pointer = {
   },
 
   async saveLocally({ dataRoot }: { dataRoot: CID }): Promise<void> {
-    console.log(this.LOCAL_NAME, dataRoot)
     await IDB.set(this.LOCAL_NAME, dataRoot.toString())
   },
 
