@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.1](https://github.com/icidasset/radical-edward/compare/w3-wnfs-v0.1.0...w3-wnfs-v0.1.1) (2024-03-27)
+
+
+### Bug Fixes
+
+* Fixed issue with offline example ([da310c0](https://github.com/icidasset/radical-edward/commit/da310c06489171924d2ef149c9c80dbac8bdf2a2))
+
 ## [0.1.0](https://github.com/icidasset/radical-edward/compare/w3-wnfs-v0.0.1...w3-wnfs-v0.1.0) (2024-03-27)
 
 
