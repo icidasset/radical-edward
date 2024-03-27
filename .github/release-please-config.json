@@ -3,6 +3,7 @@
   "release-type": "node",
   "packages": {
     "packages/maake-oob": {},
-    "packages/partykit-transport": {}
+    "packages/partykit-transport": {},
+    "packages/w3-wnfs": {}
   }
 }
