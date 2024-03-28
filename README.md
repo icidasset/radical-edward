@@ -1,6 +1,6 @@
 # Radical Edward
 
-Radical packages that can be used to make distributed web apps. While some are completely generic, others are built with [WNFS](https://github.com/wnfs-wg/) and [UCAN](https://github.com/ucan-wg/) in mind.
+Radical packages that can be used to make distributed web apps using composable protocols. While some packages are completely generic, others are built for specific protocols. This project aims to improve interoperability and adoption of several composable protocols that allow someone to build software that is secure, safe, sustainable and allows for user agency and a greener internet.
 
 ![](https://i.pinimg.com/736x/49/c8/d4/49c8d4ac8b632a0fe2661cb4006fba32--purple-shorts-gif-art.jpg)
 
