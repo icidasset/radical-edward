@@ -1,6 +1,6 @@
-# Web3Storage example
+# W3Name Passkey example
 
-An example app that shows how to store a WNFS on Web3Storage using the `@wnfs-wg/nest` package and some of the packages from this repo.
+Shows how to use a ed25519 private key derived from a passkey as a W3Name to publish to IPNS.
 
 ## Run locally
 
