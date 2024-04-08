@@ -1,6 +1,6 @@
-# W3Name Passkey example
+# WNFS Passkey example
 
-Shows how to use a ed25519 private key derived from a passkey as a W3Name to publish to IPNS.
+Shows how to save a WNFS access key (aka. capsule key) alongside a passkey using the largeBlob Webauthn extension.
 
 ## Run locally
 
