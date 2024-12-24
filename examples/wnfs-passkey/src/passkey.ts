@@ -2,6 +2,7 @@ import * as IDB from 'idb-keyval'
 
 import { base64url } from 'iso-base/rfc4648'
 import { randomBytes } from 'iso-base/crypto'
+import { utf8 } from 'iso-base/utf8'
 import { credentialsCreate, credentialsGet } from 'iso-passkeys'
 
 // CREATE
@@ -45,17 +46,22 @@ export async function create({
       },
       // pubKeyCredParams: see https://github.com/hugomrdias/iso-repo/blob/main/packages/iso-passkeys/src/parsing.js#L172C5-L172C21
       extensions: {
-        largeBlob: {
-          support: 'required',
+        prf: {
+          eval: {
+            first: utf8.decode(rp.id + 'signing').buffer,
+            second: utf8.decode(rp.id + 'encryption').buffer,
+          },
         },
       },
     },
   })
 
-  if (credential.clientExtensionResults.largeBlob?.supported !== true)
+  console.log(credential.clientExtensionResults)
+
+  if (credential.clientExtensionResults.prf?.enabled !== true)
     return {
       supported: false,
-      reason: 'This browser does not support the Webauthn large-blob extension',
+      reason: 'This browser does not support the Webauthn PRF extension',
     }
 
   await IDB.set('passkeys', [credential])
@@ -67,20 +73,18 @@ export async function create({
 /**
  *
  * @param root0
- * @param root0.blob
  * @param root0.mediation
  */
 export async function get({
-  blob,
   mediation,
 }: {
-  blob?: Uint8Array
   mediation?: CredentialMediationRequirement
 }): Promise<
   | {
       supported: true
       userHandle: string | undefined
       assertion: Awaited<ReturnType<typeof credentialsGet>>
+      results: { first: BufferSource; second: BufferSource }
     }
   | {
       supported: false
@@ -89,6 +93,7 @@ export async function get({
 > {
   const rp = relyingParty()
   const credentials = await IDB.get('passkeys')
+  console.log(credentials)
 
   const assertion = await credentialsGet({
     mediation,
@@ -97,24 +102,30 @@ export async function get({
       allowCredentials: mediation === 'conditional' ? [] : credentials,
       rpId: rp.id,
       extensions: {
-        largeBlob: blob === undefined ? { read: true } : { write: blob },
+        prf: {
+          eval: {
+            first: utf8.decode(rp.id + 'signing').buffer,
+            second: utf8.decode(rp.id + 'encryption').buffer,
+          },
+        },
       },
     },
   })
 
-  if (
-    assertion.clientExtensionResults.largeBlob?.blob === undefined &&
-    assertion.clientExtensionResults.largeBlob?.written === undefined
-  )
+  if (assertion.clientExtensionResults.prf?.results?.second === undefined)
     return {
       supported: false,
-      reason: 'This browser does not support the Webauthn large-blob extension',
+      reason: 'This browser does not support the Webauthn PRF extension',
     }
 
   return {
     supported: true,
     userHandle: assertion.userHandle,
     assertion,
+    results: {
+      first: assertion.clientExtensionResults.prf.results.first,
+      second: assertion.clientExtensionResults.prf.results.second,
+    },
   }
 }
 

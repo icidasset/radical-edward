@@ -1,11 +1,10 @@
 import * as IDB from 'idb-keyval'
 import { CID, FileSystem, Path } from '@wnfs-wg/nest'
 import { IDBBlockstore } from 'blockstore-idb'
-import { base64 } from 'iso-base/rfc4648'
+import { base64, base64url } from 'iso-base/rfc4648'
 
 import * as Passkey from './passkey'
-
-let capsuleKey: Uint8Array | undefined
+import { buildEncryptionKey, encrypt } from './crypto'
 
 // REGISTER
 
@@ -31,40 +30,66 @@ document.querySelector('#load')?.addEventListener('click', () => {
  *
  */
 async function load(): Promise<void> {
-  const passkey = await Passkey.get({})
-  if (
-    passkey.supported &&
-    passkey.assertion.clientExtensionResults.largeBlob?.blob !== undefined
-  ) {
-    capsuleKey = new Uint8Array(
-      passkey.assertion.clientExtensionResults.largeBlob.blob
-    )
-  }
+  const capsuleKey: undefined | Uint8Array = await IDB.get('capsuleKey')
 
+  // Create/Load FS
   const dataRoot: undefined | string = await IDB.get('dataRoot')
 
   const blockstore = new IDBBlockstore('blockstore')
   await blockstore.open()
+
+  console.log(dataRoot)
 
   const fs =
     dataRoot === undefined
       ? await FileSystem.create({
           blockstore,
         })
-      : await FileSystem.fromCID(CID.parse(dataRoot), {
+      : await FileSystem.fromCID(CID.parse(dataRoot.split('/')[1]), {
           blockstore,
         })
 
-  fs.on('commit', async ({ dataRoot }) => {
-    await IDB.set('dataRoot', dataRoot.toString())
+  fs.on('publish', async ({ dataRoot }) => {
+    const encryptedCapsuleKey: undefined | Uint8Array = await IDB.get(
+      'encryptedCapsuleKey'
+    )
+
+    if (encryptedCapsuleKey === undefined) {
+      throw new Error('`encryptedCapsuleKey` is missing from the database.')
+    }
+
+    const encCap = base64url.encode(encryptedCapsuleKey)
+    await IDB.set('dataRoot', `${encCap}/${dataRoot.toString()}`)
   })
 
   if (capsuleKey === undefined) {
+    // Create private root
+    const passkey = await Passkey.get({})
+
+    if (!passkey.supported) {
+      throw new Error(passkey.reason)
+    }
+
+    // Signing key, not used atm: passkey.results.first
+    // -> Could be used to get a X25519 key and use that to create private share for ourselves (unsupported atm)
+    //
+    // Encryption key material, passkey.results.second
+    const keyMaterial = passkey.results.second
+    const encryptionKey = await buildEncryptionKey(keyMaterial)
+
+    // Node creation
     const result = await fs.createPrivateNode({ path: Path.root() })
-    capsuleKey = result.capsuleKey
-    console.log('Saved capsuleKey', base64.encode(capsuleKey))
-    await Passkey.get({ blob: capsuleKey })
+
+    // Save keys
+    await IDB.set('capsuleKey', result.capsuleKey)
+    await IDB.set(
+      'encryptedCapsuleKey',
+      await encrypt(result.capsuleKey, encryptionKey)
+    )
+
+    console.log('Saved capsuleKey', base64.encode(result.capsuleKey))
   } else {
+    // Load private root
     console.log('Resolved capsuleKey', base64.encode(capsuleKey))
     await fs.mountPrivateNode({
       path: Path.root(),
