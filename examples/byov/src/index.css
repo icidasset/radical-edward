@@ -1,0 +1,35 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: 'Sunday Masthead';
+  font-weight: 400;
+  src: url('../static/fonts/sunday_masthead-regular.woff2') format('woff2');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Inclusive Sans';
+  font-weight: 1 999;
+  src: url('../static/fonts/inclusive_sans[wght].woff2') format('woff2');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Inclusive Sans';
+  font-style: italic;
+  font-weight: 1 999;
+  src: url('../static/fonts/inclusive_sans-italic[wght].woff2') format('woff2');
+  font-display: block;
+}
+
+:root {
+  @apply bg-stone-900 text-stone-100;
+  font-family: 'Inclusive Sans', sans-serif;
+}
+
+h1 {
+  @apply leading-none text-4xl;
+  font-family: 'Sunday Masthead', sans-serif;
+}
