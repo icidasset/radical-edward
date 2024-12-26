@@ -1,32 +1,28 @@
-import { type Signal, computed, effect } from 'spellcaster'
+import { type Signal } from 'spellcaster'
 import { tags, text } from 'spellcaster/hyperscript.js'
+import { reactiveElements } from '../common'
 
 /**
  *
  * @param page
  * @param setPage
  */
-export function PageNav(page: Signal<string>, setPage: (page: string) => void) {
+export function PageNav(page: Signal<string>) {
   return tags.nav(
-    { id: 'page-nav', className: 'justify-self-end mt-3 space-x-4' },
-    (element) => {
-      const signal = computed(() => {
-        return [
-          NavItem('All_Videos', {
-            isActive: page() === 'all-videos',
-            onclick: () => { setPage('all-videos'); },
-          }),
-          NavItem('My_Channel', {
-            isActive: page() === 'my-channel',
-            onclick: () => { setPage('my-channel'); },
-          }),
-        ]
-      })
-
-      return effect(() => {
-        element.replaceChildren(...signal())
-      })
-    }
+    {
+      id: 'page-nav',
+      className: 'justify-self-end mt-3 space-x-4',
+    },
+    reactiveElements(() => [
+      NavItem('All_Videos', {
+        href: '/',
+        isActive: page() === 'all-videos',
+      }),
+      NavItem('My_Channel', {
+        href: '/me/',
+        isActive: page() === 'my-channel',
+      }),
+    ])
   )
 }
 
@@ -34,15 +30,21 @@ export function PageNav(page: Signal<string>, setPage: (page: string) => void) {
  *
  * @param t
  * @param root0
+ * @param root0.href
  * @param root0.isActive
- * @param root0.onclick
  */
 function NavItem(
   t: string,
-  { isActive, onclick }: { isActive: boolean; onclick: () => void }
+  { href, isActive }: { href: string; isActive: boolean }
 ) {
   const className = isActive
     ? 'text-flaming-june border-b-2 border-current'
     : 'cursor-pointer'
-  return tags.a({ className, onclick }, text(t))
+
+  const onclick = (event: Event) => {
+    event.preventDefault()
+    window.navigation.navigate(href)
+  }
+
+  return tags.a({ className, href, onclick }, text(t))
 }

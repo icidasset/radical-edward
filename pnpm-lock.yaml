@@ -44,6 +44,9 @@ importers:
       '@ucanto/core':
         specifier: ^10.0.1
         version: 10.0.1
+      '@virtualstate/navigation':
+        specifier: 1.0.1-alpha.206
+        version: 1.0.1-alpha.206
       '@web3-storage/upload-client':
         specifier: ^17.1.3
         version: 17.1.3(encoding@0.1.13)
@@ -78,6 +81,9 @@ importers:
       '@rsbuild/core':
         specifier: ^0.7.10
         version: 0.7.10
+      '@types/dom-navigation':
+        specifier: ^1.0.4
+        version: 1.0.4
       '@types/node':
         specifier: ^22.10.2
         version: 22.10.2
@@ -1772,6 +1778,9 @@ packages:
   '@types/dns-packet@5.6.5':
     resolution: {integrity: sha512-qXOC7XLOEe43ehtWJCMnQXvgcIpv6rPmQ1jXT98Ad8A3TB1Ue50jsCbSSSyuazScEuZ/Q026vHbrOTVkmwA+7Q==}
 
+  '@types/dom-navigation@1.0.4':
+    resolution: {integrity: sha512-s4pCS4jogEzXQsqoPZdLU+GA/5Wq+GoFsgiN2VGI8tw5I2Y/CftGJpC76iVhyoD7JTTEo+p0w+eh8SItMaxmgg==}
+
   '@types/estree@1.0.5':
     resolution: {integrity: sha512-/kYRxGDLWzHOB7q+wtSUQlFrtcdUccpfy+X+9iMBpHK8QLLhx2wIPYuS5DYtR9Wa/YlZAbIovy7qVdB1Aq6Lyw==}
 
@@ -1964,6 +1973,12 @@ packages:
 
   '@ungap/structured-clone@1.2.0':
     resolution: {integrity: sha512-zuVdFrMJiuCDQUMCzQaD6KL28MjnqqN8XnAqiEq9PNm/hCPTSGfrXCOfwj1ow4LFb/tNymJPwsNbVePc1xFqrQ==}
+
+  '@virtualstate/composite-key@1.0.0':
+    resolution: {integrity: sha512-5G3RT87X1w39UQyBvqQpTfsxK9FjoKlXfonvIY9esAHe9d0vOWVGtbElJppwJKWzh508Ja6gWn7W7dWHwj50Jw==}
+
+  '@virtualstate/navigation@1.0.1-alpha.206':
+    resolution: {integrity: sha512-DgwtJV2CA+e0A+jJdWKXi+HI/S9qw4HY0IkNwkJtmVfWFqn62f/7YKkBVCR/EYB9XvX5vDZsr4B/+OudB9VViw==}
 
   '@vue/compiler-core@3.3.7':
     resolution: {integrity: sha512-pACdY6YnTNVLXsB86YD8OF9ihwpolzhhtdLVHhBL6do/ykr6kKXNYABRtNMGrsQXpEXXyAdwvWWkuTbs4MFtPQ==}
@@ -6567,6 +6582,8 @@ snapshots:
     dependencies:
       '@types/node': 20.11.30
 
+  '@types/dom-navigation@1.0.4': {}
+
   '@types/estree@1.0.5': {}
 
   '@types/istanbul-lib-coverage@2.0.6': {}
@@ -6839,6 +6856,12 @@ snapshots:
       multiformats: 11.0.2
 
   '@ungap/structured-clone@1.2.0': {}
+
+  '@virtualstate/composite-key@1.0.0': {}
+
+  '@virtualstate/navigation@1.0.1-alpha.206':
+    dependencies:
+      '@virtualstate/composite-key': 1.0.0
 
   '@vue/compiler-core@3.3.7':
     dependencies:

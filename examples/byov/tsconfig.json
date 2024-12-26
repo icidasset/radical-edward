@@ -1,11 +1,11 @@
 {
   "compilerOptions": {
-    "target": "ES2022",
+    "target": "ESNext",
     "lib": ["ESNext", "DOM", "DOM.Iterable", "WebWorker"],
     "moduleDetection": "force",
     "module": "ESNext",
     "moduleResolution": "Bundler",
-    "types": [],
+    "types": ["dom-navigation"],
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "outDir": "dist",

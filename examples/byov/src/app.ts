@@ -2,12 +2,13 @@ import type * as w3up from '@web3-storage/w3up-client'
 import type { Blockstore, Tracker } from 'w3-wnfs'
 
 import { type FileSystem } from '@wnfs-wg/nest'
-import { signal } from 'spellcaster/spellcaster.js'
+import { type Signal, signal } from 'spellcaster/spellcaster.js'
 import { tags } from 'spellcaster/hyperscript.js'
 
 import { PageNav } from './components/page-nav'
 import { YourSubscriptions } from './components/your-subscriptions'
 import { VideosOnBluesky } from './components/videos-on-bluesky'
+import { reactiveElement } from './common'
 
 // TODO:
 // * Upload video to private folder
@@ -45,10 +46,22 @@ export async function init({
   const [page, setPage] = signal(initialPage())
 
   const pageNav = document.querySelector('#page-nav')
-  if (pageNav !== null) pageNav.replaceWith(PageNav(page, setPage))
+  if (pageNav !== null) pageNav.replaceWith(PageNav(page))
 
   const main = document.querySelector('#app')
   if (main !== null) main.replaceWith(App(page))
+
+  // URL routing
+  window.navigation.addEventListener('navigate', (event: NavigateEvent) => {
+    const url = new URL(event.destination.url)
+
+    event.intercept({
+      async handler() {
+        const page = pageFromPath(url.pathname)
+        if (page !== undefined) setPage(page)
+      },
+    })
+  })
 }
 
 /**
@@ -56,14 +69,22 @@ export async function init({
  * @param page
  */
 function App(page: Signal<string>) {
-  switch (page()) {
-    case 'all-videos': {
-      return AllVideos()
-    }
-    default: {
-      return tags.span({}, [])
-    }
-  }
+  return tags.div(
+    {},
+    reactiveElement(() => {
+      switch (page()) {
+        case 'all-videos': {
+          return AllVideos()
+        }
+        case 'my-channel': {
+          return MyChannel()
+        }
+        default: {
+          return tags.span({}, [])
+        }
+      }
+    })
+  )
 }
 
 // ROUTING
@@ -72,7 +93,22 @@ function App(page: Signal<string>) {
  *
  */
 function initialPage() {
-  return 'all-videos'
+  return pageFromPath(window.location.pathname) ?? 'all-videos'
+}
+
+/**
+ *
+ * @param path
+ */
+function pageFromPath(path: string) {
+  switch (path) {
+    case '/': {
+      return 'all-videos'
+    }
+    case '/me/': {
+      return 'my-channel'
+    }
+  }
 }
 
 // PAGE :: ALL VIDEOS
@@ -82,4 +118,13 @@ function initialPage() {
  */
 function AllVideos() {
   return tags.div({}, [YourSubscriptions(), VideosOnBluesky()])
+}
+
+// PAGE :: MY CHANNEL
+
+/**
+ *
+ */
+function MyChannel() {
+  return tags.div({}, [])
 }

@@ -1,4 +1,5 @@
 import './index.css'
+import '@virtualstate/navigation/polyfill'
 
 import type { FileSystem } from '@wnfs-wg/nest'
 
