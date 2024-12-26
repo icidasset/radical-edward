@@ -24,12 +24,46 @@
   font-display: block;
 }
 
+@font-face {
+  font-family: 'Departure Mono';
+  font-weight: 400;
+  src: url('../static/fonts/departure_mono-regular.woff2') format('woff2');
+  font-display: swap;
+}
+
 :root {
-  @apply bg-stone-900 text-stone-100;
-  font-family: 'Inclusive Sans', sans-serif;
+  @apply bg-stone-900 leading-relaxed text-stone-100;
+  font-family: 'Departure Mono', monospace;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: 'Sunday Masthead', sans-serif;
 }
 
 h1 {
-  @apply leading-none text-4xl;
-  font-family: 'Sunday Masthead', sans-serif;
+  @apply leading-none trim-text-box text-4xl;
+  text-box: trim-both cap alphabetic;
+}
+
+h2 {
+  @apply leading-none mb-5 mt-12 trim-text-box text-2xl;
+}
+
+p {
+  @apply leading-relaxed;
+}
+
+button {
+  @apply bg-plummy px-2 py-1 rounded text-sm;
+}
+
+.trim-text-box {
+  text-box: trim-both cap alphabetic;
 }

@@ -9,28 +9,29 @@
   </head>
 
   <body>
-    <main class="container mx-auto p-4">
+    <div class="container mx-auto p-4">
       <!-- HEADER -->
-      <header class="border-b border-stone-800 flex mb-10 pb-10">
-        <h1 class="flex-1">
+      <header class="border-b border-stone-800 flex mb-12 pb-12">
+        <h1 class="flex-1 mr-4">
           <span>B</span>RING<br />
           <span>Y</span>OUR<br />
           <span>O</span>WN<br />
           <span>V</span>IDEO
         </h1>
-        <div class="max-w-sm">
-          <p>
+        <div class="flex flex-col justify-between text-sm max-w-sm">
+          <p class="trim-text-box">
             Encrypt your videos with a passkey and upload them to your cloud
-            storage. Each user pays for and brings their own storage. Videos can
-            be made public and/or shared with others.
+            storage. Videos can be made public and/or shared with others.
           </p>
+
+          <nav id="page-nav" class="justify-self-end mt-3 space-x-4"></nav>
         </div>
       </header>
 
-      <!-- UPLOAD -->
-      <div class="mb-10">
-        <div class="border-2 border-dashed border-stone-700 h-48 rounded"></div>
-      </div>
-    </main>
+      <!-- CONTENT -->
+      <main id="app" class="mb-10">
+        <div class="text-sm">BOOTING UP SYSTEM ...</div>
+      </main>
+    </div>
   </body>
 </html>

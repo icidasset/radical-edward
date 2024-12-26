@@ -41,6 +41,8 @@
       "*.woff2"
     ],
     "rules": {
+      "@typescript-eslint/explicit-function-return-type": "off",
+      "import/extensions": 0,
       "no-console": [
         "off",
         "always"
