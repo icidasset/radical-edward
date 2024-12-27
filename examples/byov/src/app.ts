@@ -2,13 +2,16 @@ import type * as w3up from '@web3-storage/w3up-client'
 import type { Blockstore, Tracker } from 'w3-wnfs'
 
 import { type FileSystem } from '@wnfs-wg/nest'
-import { type Signal, signal } from 'spellcaster/spellcaster.js'
 import { tags } from 'spellcaster/hyperscript.js'
 
+import * as Routing from './routing'
 import { PageNav } from './components/page-nav'
 import { YourSubscriptions } from './components/your-subscriptions'
 import { VideosOnBluesky } from './components/videos-on-bluesky'
 import { reactiveElement } from './common'
+import { YourVideos } from './components/your-videos'
+import { page } from './signals'
+import { UploadVideo } from './components/upload-video'
 
 // TODO:
 // * Upload video to private folder
@@ -29,46 +32,24 @@ export interface Context {
 
 /**
  *
- * @param root0
- * @param root0.blockstore
- * @param root0.client
- * @param root0.fs
- * @param root0.isAuthenticated
- * @param root0.tracker
+ * @param context
  */
-export async function init({
-  blockstore,
-  client,
-  fs,
-  isAuthenticated,
-  tracker,
-}: Context): Promise<void> {
-  const [page, setPage] = signal(initialPage())
+export async function init(context: Context): Promise<void> {
+  Routing.intercept()
 
   const pageNav = document.querySelector('#page-nav')
-  if (pageNav !== null) pageNav.replaceWith(PageNav(page))
+  if (pageNav !== null) pageNav.replaceWith(PageNav())
 
   const main = document.querySelector('#app')
-  if (main !== null) main.replaceWith(App(page))
-
-  // URL routing
-  window.navigation.addEventListener('navigate', (event: NavigateEvent) => {
-    const url = new URL(event.destination.url)
-
-    event.intercept({
-      async handler() {
-        const page = pageFromPath(url.pathname)
-        if (page !== undefined) setPage(page)
-      },
-    })
-  })
+  if (main !== null) main.replaceWith(App(context))
 }
 
 /**
  *
+ * @param context
  * @param page
  */
-function App(page: Signal<string>) {
+function App(context: Context) {
   return tags.div(
     {},
     reactiveElement(() => {
@@ -77,7 +58,7 @@ function App(page: Signal<string>) {
           return AllVideos()
         }
         case 'my-channel': {
-          return MyChannel()
+          return MyChannel(context)
         }
         default: {
           return tags.span({}, [])
@@ -85,30 +66,6 @@ function App(page: Signal<string>) {
       }
     })
   )
-}
-
-// ROUTING
-
-/**
- *
- */
-function initialPage() {
-  return pageFromPath(window.location.pathname) ?? 'all-videos'
-}
-
-/**
- *
- * @param path
- */
-function pageFromPath(path: string) {
-  switch (path) {
-    case '/': {
-      return 'all-videos'
-    }
-    case '/me/': {
-      return 'my-channel'
-    }
-  }
 }
 
 // PAGE :: ALL VIDEOS
@@ -124,7 +81,14 @@ function AllVideos() {
 
 /**
  *
+ * @param context
  */
-function MyChannel() {
-  return tags.div({}, [])
+function MyChannel(context: Context) {
+  return tags.div({}, [
+    //
+    YourVideos(context.fs),
+
+    //
+    UploadVideo(context.fs),
+  ])
 }

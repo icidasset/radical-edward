@@ -1,13 +1,13 @@
-import { type Signal } from 'spellcaster'
 import { tags, text } from 'spellcaster/hyperscript.js'
 import { reactiveElements } from '../common'
+import { page } from '../signals'
 
 /**
  *
  * @param page
  * @param setPage
  */
-export function PageNav(page: Signal<string>) {
+export function PageNav() {
   return tags.nav(
     {
       id: 'page-nav',
