@@ -1,4 +1,3 @@
-import type { FileSystem } from '@wnfs-wg/nest'
 import { effect } from 'spellcaster'
 import { tags, text } from 'spellcaster/hyperscript.js'
 
@@ -9,13 +8,13 @@ import {
   listVideos,
 } from '../fs/videos'
 import { reactiveElement } from '../common'
-import { setVideos, videos } from '../signals'
+import { fileSystem, setVideos, videos } from '../signals'
 
 /**
  *
  * @param fs
  */
-export function YourVideos(fs: FileSystem) {
+export function YourVideos() {
   let timeoutId: undefined | ReturnType<typeof setTimeout>
 
   effect(() => {
@@ -26,14 +25,14 @@ export function YourVideos(fs: FileSystem) {
 
   // Load video list & update it when the source changes
   effect(async () => {
-    const list = await listVideos(fs)
+    const list = await listVideos()
     clearTimeout(timeoutId)
     setVideos(list)
 
-    fs.on('commit', async ({ modifications }) => {
+    fileSystem().on('commit', async ({ modifications }) => {
       console.log('🔮 Commit', modifications)
       const videoListChanged = modifications.some((m) => m.path[1] === 'Videos')
-      if (videoListChanged) setVideos(await listVideos(fs))
+      if (videoListChanged) setVideos(await listVideos())
     })
   })
 
@@ -66,7 +65,7 @@ export function YourVideos(fs: FileSystem) {
               className: 'pl-10',
               style: 'list-style-type: decimal-leading-zero',
             },
-            list.map((video) => renderVideo(fs, video))
+            list.map((video) => renderVideo(video))
           ),
         ]
       )
@@ -79,7 +78,7 @@ export function YourVideos(fs: FileSystem) {
  * @param fs
  * @param video
  */
-function renderVideo(fs: FileSystem, video: Video) {
+function renderVideo(video: Video) {
   return tags.li({}, [
     tags.span({}, text(video.name.length > 0 ? video.name : video.id)),
     // tags.br({}, []),
@@ -93,6 +92,7 @@ function renderVideo(fs: FileSystem, video: Video) {
             ;(event.target as HTMLElement).textContent = '♻️ REMOVING VIDEO ...'
           }
 
+          const fs = fileSystem()
           await fs.remove([
             video.public ? 'public' : 'private',
             'Videos',
@@ -111,6 +111,7 @@ function renderVideo(fs: FileSystem, video: Video) {
             ;(event.target as HTMLElement).textContent = '🚛 MOVING FILES ...'
           }
 
+          const fs = fileSystem()
           await fs.move(
             [
               ...(video.public ? PUBLIC_VIDEO_PATH : PRIVATE_VIDEO_PATH),
@@ -126,8 +127,8 @@ function renderVideo(fs: FileSystem, video: Video) {
       text(video.public ? '🔐 MAKE PRIVATE' : '🌍 MAKE PUBLIC')
     ),
     tags.span({}, text(video.public ? ' / ' : '')),
-    video.public
-      ? tags.a({ href: `https://dweb.link/ipfs/CID` }, text('🔗 URL'))
-      : tags.span({}, []),
+    video.url === undefined
+      ? tags.span({}, [])
+      : tags.a({ href: video.url }, text('🔗 URL')),
   ])
 }

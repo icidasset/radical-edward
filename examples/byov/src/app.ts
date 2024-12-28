@@ -1,7 +1,3 @@
-import type * as w3up from '@web3-storage/w3up-client'
-import type { Blockstore, Tracker } from 'w3-wnfs'
-
-import { type FileSystem } from '@wnfs-wg/nest'
 import { tags } from 'spellcaster/hyperscript.js'
 
 import * as Routing from './routing'
@@ -23,34 +19,23 @@ import { ConnectStoracha } from './components/connect-storacha'
 
 // 🏡
 
-export interface Context {
-  blockstore: Blockstore
-  client: w3up.Client
-  fs: FileSystem
-  isAuthenticated: boolean
-  tracker: Tracker
-}
-
 /**
  *
- * @param context
  */
-export async function init(context: Context): Promise<void> {
+export async function init(): Promise<void> {
   Routing.intercept()
 
   const pageNav = document.querySelector('#page-nav')
   if (pageNav !== null) pageNav.replaceWith(PageNav())
 
   const main = document.querySelector('#app')
-  if (main !== null) main.replaceWith(App(context))
+  if (main !== null) main.replaceWith(App())
 }
 
 /**
  *
- * @param context
- * @param page
  */
-function App(context: Context) {
+function App() {
   return tags.div(
     {},
     reactiveElement(() => {
@@ -59,7 +44,7 @@ function App(context: Context) {
           return AllVideos()
         }
         case 'my-channel': {
-          return MyChannel(context)
+          return MyChannel()
         }
         default: {
           return tags.span({}, [])
@@ -82,12 +67,7 @@ function AllVideos() {
 
 /**
  *
- * @param context
  */
-function MyChannel(context: Context) {
-  return tags.div({}, [
-    ConnectStoracha(context.client),
-    YourVideos(context.fs),
-    UploadVideo(context.fs),
-  ])
+function MyChannel() {
+  return tags.div({}, [ConnectStoracha(), YourVideos(), UploadVideo()])
 }

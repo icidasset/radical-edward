@@ -1,18 +1,16 @@
-import type { FileSystem } from '@wnfs-wg/nest'
 import { tags, text } from 'spellcaster/hyperscript.js'
 import { reactiveElement } from '../common'
-import { isUploading, setIsUploading } from '../signals'
+import { fileSystem, isUploading, setIsUploading } from '../signals'
 
 /**
  *
- * @param fs
  */
-export function UploadVideo(fs: FileSystem) {
+export function UploadVideo() {
   const dropzone = tags.div(
     {
       className:
         'border-2 border-dashed border-stone-700 flex flex-col items-center h-48 justify-center overflow-hidden text-stone-600 rounded-lg',
-      ondrop: dropHandler(fs),
+      ondrop: dropHandler,
       ondragover: (event: Event) => {
         event.preventDefault()
       },
@@ -24,7 +22,7 @@ export function UploadVideo(fs: FileSystem) {
           accept: 'video/*',
           className: 'inline-block mt-2',
           type: 'file',
-          onchange: inputHandler(fs),
+          onchange: inputHandler,
         },
         text('browse for your videos')
       ),
@@ -44,45 +42,41 @@ export function UploadVideo(fs: FileSystem) {
 
 /**
  *
- * @param fs
+ * @param event
  */
-function dropHandler(fs: FileSystem) {
-  return async (event: DragEvent) => {
-    event.preventDefault()
+async function dropHandler(event: DragEvent) {
+  event.preventDefault()
 
-    const files: File[] =
-      event.dataTransfer?.items === undefined
-        ? [...(event.dataTransfer?.files ?? [])]
-        : [...event.dataTransfer.items]
-            .filter((i) => i.kind === 'file')
-            .map((i) => i.getAsFile())
-            .filter((i): i is File => i !== null)
+  const files: File[] =
+    event.dataTransfer?.items === undefined
+      ? [...(event.dataTransfer?.files ?? [])]
+      : [...event.dataTransfer.items]
+          .filter((i) => i.kind === 'file')
+          .map((i) => i.getAsFile())
+          .filter((i): i is File => i !== null)
 
-    await uploadFiles(fs, files)
-  }
+  await uploadFiles(files)
 }
 
 /**
  *
- * @param fs
+ * @param event
  */
-function inputHandler(fs: FileSystem) {
-  return async (event: InputEvent) => {
-    if (event.target === null) return
+async function inputHandler(event: InputEvent) {
+  if (event.target === null) return
 
-    const input = event.target as HTMLInputElement
-    if (input.files === null) return
+  const input = event.target as HTMLInputElement
+  if (input.files === null) return
 
-    await uploadFiles(fs, [...input.files])
-  }
+  await uploadFiles([...input.files])
 }
 
 /**
  *
- * @param fs
  * @param files
  */
-async function uploadFiles(fs: FileSystem, files: File[]) {
+async function uploadFiles(files: File[]) {
+  const fs = fileSystem()
   const timeoutId = setTimeout(() => {
     setIsUploading(true)
   }, 500)

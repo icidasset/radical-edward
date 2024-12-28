@@ -20,19 +20,37 @@ export async function load({
   blockstore: Blockstore
   client: Client
 }): Promise<FileSystem> {
-  // WNFS can mount individual private nodes,
-  // in this case we mount the root private node.
-  const privatePath = Path.root()
-
-  // State
   const dataRoot = await Pointer.lookup({ client })
-  const storedKey = await Keys.lookup({ path: privatePath })
 
   // Create or load file system
   const fs =
     dataRoot === undefined
       ? await FileSystem.create({ blockstore })
       : await FileSystem.fromCID(dataRoot, { blockstore })
+
+  // Fin
+  return fs
+}
+
+/**
+ *
+ * @param root0
+ * @param root0.blockstore
+ * @param root0.fs
+ */
+export async function loadPrivate({
+  blockstore,
+  fs,
+}: {
+  blockstore: Blockstore
+  fs: FileSystem
+}) {
+  // WNFS can mount individual private nodes,
+  // in this case we mount the root private node.
+  const privatePath = Path.root()
+
+  // State
+  const storedKey = await Keys.lookup({ path: privatePath })
 
   // Create new or load existing private directory at the root
   if (storedKey === undefined) {
@@ -51,7 +69,6 @@ export async function load({
     })
   }
 
-  // Fin
   return fs
 }
 

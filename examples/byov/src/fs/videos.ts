@@ -1,4 +1,5 @@
-import type { FileSystem, Path } from '@wnfs-wg/nest'
+import type { Path } from '@wnfs-wg/nest'
+import { fileSystem } from '../signals'
 
 export const PUBLIC_VIDEO_PATH: Path.PartitionedNonEmpty<Path.Public> = [
   'public',
@@ -14,13 +15,15 @@ export interface Video {
   id: string
   name: string
   public: boolean
+  url?: string
 }
 
 /**
  *
- * @param fs
  */
-export async function listVideos(fs: FileSystem): Promise<Video[]> {
+export async function listVideos(): Promise<Video[]> {
+  const fs = fileSystem()
+
   const publ = (await fs.exists(PUBLIC_VIDEO_PATH))
     ? await fs.listDirectory(PUBLIC_VIDEO_PATH)
     : []
@@ -29,13 +32,28 @@ export async function listVideos(fs: FileSystem): Promise<Video[]> {
     : []
 
   const publWithNames = await Promise.all(
-    publ.map(async (v) => ({
-      id: v.name,
-      public: true,
-      name: (await fs.exists([...PUBLIC_VIDEO_PATH, v.name, 'name.txt']))
+    publ.map(async (v) => {
+      const name = (await fs.exists([...PUBLIC_VIDEO_PATH, v.name, 'name.txt']))
         ? await fs.read([...PUBLIC_VIDEO_PATH, v.name, 'name.txt'], 'utf8')
-        : '',
-    }))
+        : ''
+
+      const ext = name.match(/\.([^$]+)/)?.[1]
+      const cid = await fs.contentCID([
+        ...PUBLIC_VIDEO_PATH,
+        v.name,
+        `video${ext === undefined ? '' : '.' + ext}`,
+      ])
+
+      return {
+        id: v.name,
+        public: true,
+        url:
+          cid === undefined
+            ? undefined
+            : `https://w3s.link/ipfs/${cid.toString()}`,
+        name,
+      }
+    })
   )
 
   const privWithNames = await Promise.all(
