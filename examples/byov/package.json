@@ -10,11 +10,12 @@
   "main": "src/index.js",
   "scripts": {
     "lint": "tsc --build && eslint . && prettier --check '**/*.{js,jsx,ts,tsx,yml,json,css}' --ignore-path ../../.gitignore",
-    "dev": "rsbuild dev",
-    "build": "rsbuild build",
-    "preview": "rsbuild preview"
+    "dev": "vite dev",
+    "build": "vite build",
+    "preview": "vite preview"
   },
   "dependencies": {
+    "@noble/curves": "^1.3.0",
     "@ucanto/core": "^10.0.1",
     "@virtualstate/navigation": "1.0.1-alpha.206",
     "@web3-storage/upload-client": "^17.1.3",
@@ -24,15 +25,18 @@
     "blockstore-idb": "^2.0.1",
     "idb-keyval": "^6.2.1",
     "interface-blockstore": "^5.3.1",
+    "iso-base": "^4.0.0",
+    "iso-passkeys": "^0.2.2",
     "spellcaster": "^5.0.2",
     "tailwindcss": "^3.4.17",
     "w3-wnfs": "workspace:*"
   },
   "devDependencies": {
-    "@rsbuild/core": "^0.7.10",
     "@types/dom-navigation": "^1.0.4",
     "@types/node": "^22.10.2",
-    "typescript": "^5.7.2"
+    "typescript": "^5.7.2",
+    "vite": "^5.2.6",
+    "vite-plugin-wasm": "^3.4.1"
   },
   "eslintConfig": {
     "extends": [

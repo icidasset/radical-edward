@@ -12,6 +12,7 @@ import { reactiveElement } from './common'
 import { YourVideos } from './components/your-videos'
 import { page } from './signals'
 import { UploadVideo } from './components/upload-video'
+import { ConnectStoracha } from './components/connect-storacha'
 
 // TODO:
 // * Upload video to private folder
@@ -85,10 +86,8 @@ function AllVideos() {
  */
 function MyChannel(context: Context) {
   return tags.div({}, [
-    //
+    ConnectStoracha(context.client),
     YourVideos(context.fs),
-
-    //
     UploadVideo(context.fs),
   ])
 }

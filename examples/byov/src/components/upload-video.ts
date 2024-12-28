@@ -1,15 +1,17 @@
 import type { FileSystem } from '@wnfs-wg/nest'
 import { tags, text } from 'spellcaster/hyperscript.js'
+import { reactiveElement } from '../common'
+import { isUploading, setIsUploading } from '../signals'
 
 /**
  *
  * @param fs
  */
 export function UploadVideo(fs: FileSystem) {
-  return tags.div(
+  const dropzone = tags.div(
     {
       className:
-        'border-2 border-dashed border-stone-700 flex flex-col items-center h-48 justify-center  text-stone-600 rounded-lg',
+        'border-2 border-dashed border-stone-700 flex flex-col items-center h-48 justify-center overflow-hidden text-stone-600 rounded-lg',
       ondrop: dropHandler(fs),
       ondragover: (event: Event) => {
         event.preventDefault()
@@ -20,13 +22,23 @@ export function UploadVideo(fs: FileSystem) {
       tags.input(
         {
           accept: 'video/*',
-          className: 'block mt-2',
+          className: 'inline-block mt-2',
           type: 'file',
           onchange: inputHandler(fs),
         },
         text('browse for your videos')
       ),
     ]
+  )
+
+  return tags.div(
+    {},
+    reactiveElement(() => {
+      if (isUploading())
+        return tags.div({ className: 'text-sm' }, text('UPLOADING VIDEOS ...'))
+
+      return dropzone
+    })
   )
 }
 
@@ -71,21 +83,30 @@ function inputHandler(fs: FileSystem) {
  * @param files
  */
 async function uploadFiles(fs: FileSystem, files: File[]) {
+  const timeoutId = setTimeout(() => {
+    setIsUploading(true)
+  }, 500)
+
   const promises = files.map(async (file: File) => {
     const uuid = crypto.randomUUID()
     const bytes = new Uint8Array(await file.arrayBuffer())
     const ext = file.name.match(/\.([^$]+)/)?.[1]
 
-    console.log(ext, bytes)
+    if (!file.type.startsWith('video/')) {
+      return
+    }
 
     await fs.write(
       ['private', 'Videos', uuid, `video${ext === undefined ? '' : '.' + ext}`],
       'bytes',
       bytes
     )
+
+    await fs.write(['private', 'Videos', uuid, 'name.txt'], 'utf8', file.name)
   })
 
   await Promise.all(promises)
 
-  console.log('Upload success')
+  clearTimeout(timeoutId)
+  setIsUploading(false)
 }

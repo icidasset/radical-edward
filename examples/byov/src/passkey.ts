@@ -77,7 +77,7 @@ export async function get({
   mediation,
 }: {
   mediation?: CredentialMediationRequirement
-}): Promise<
+} = {}): Promise<
   | {
       supported: true
       userHandle: string | undefined
@@ -91,7 +91,6 @@ export async function get({
 > {
   const rp = relyingParty()
   const credentials = await IDB.get('passkeys')
-  console.log(credentials)
 
   const assertion = await credentialsGet({
     mediation,
