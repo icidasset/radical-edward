@@ -6,7 +6,12 @@ import { DIDKey } from 'iso-did/key'
 import * as Crypto from '../crypto'
 import * as FS from '../fs'
 import * as Passkey from '../passkey'
-import { blockstore, fileSystem, w3client } from '../signals'
+import {
+  blockstore,
+  fileSystem,
+  isConnectedToStoracha,
+  w3client,
+} from '../signals'
 import { reactiveElement } from '../common'
 
 /**
@@ -15,17 +20,15 @@ import { reactiveElement } from '../common'
 export function ConnectStoracha() {
   return tags.div(
     {
-      className: 'border-b border-stone-800 mb-12 pb-12 text-center',
+      className: 'mb-6 text-center',
     },
     reactiveElement(() => {
-      const client = w3client()
-
       return tags.button(
         { onclick: connect },
         text(
-          client.currentSpace() === undefined
-            ? '🌶️ Connect with Storacha'
-            : '☑️ Connected to Storacha'
+          isConnectedToStoracha()
+            ? '☑️ Connected to Storacha'
+            : '🌶️ Connect with Storacha'
         )
       )
     })

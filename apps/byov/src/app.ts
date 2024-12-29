@@ -9,6 +9,7 @@ import { YourVideos } from './components/your-videos'
 import { page } from './signals'
 import { UploadVideo } from './components/upload-video'
 import { ConnectStoracha } from './components/connect-storacha'
+import { ConnectAtProto } from './components/connect-atproto'
 
 // TODO:
 // * Upload video to private folder
@@ -69,5 +70,10 @@ function AllVideos() {
  *
  */
 function MyChannel() {
-  return tags.div({}, [ConnectStoracha(), YourVideos(), UploadVideo()])
+  return tags.div({}, [
+    ConnectStoracha(),
+    ConnectAtProto(),
+    YourVideos(),
+    UploadVideo(),
+  ])
 }

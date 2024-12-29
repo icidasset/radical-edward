@@ -1,0 +1,23 @@
+{
+  "lexicon": 1,
+  "id": "ma.tokono.byov.video",
+  "defs": {
+    "main": {
+      "type": "record",
+      "description": "A reference to a video.",
+      "key": "any",
+      "record": {
+        "type": "object",
+        "required": ["cid", "serviceProvider"],
+        "properties": {
+          "cid": {
+            "type": "string"
+          },
+          "serviceProvider": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

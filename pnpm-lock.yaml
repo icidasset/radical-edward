@@ -39,6 +39,79 @@ importers:
         specifier: 5.3.3
         version: 5.3.3
 
+  apps/byov:
+    dependencies:
+      '@atproto/api':
+        specifier: ^0.13.23
+        version: 0.13.23
+      '@atproto/oauth-client-browser':
+        specifier: ^0.3.5
+        version: 0.3.5
+      '@noble/curves':
+        specifier: ^1.3.0
+        version: 1.3.0
+      '@ucanto/core':
+        specifier: ^10.0.1
+        version: 10.0.1
+      '@virtualstate/navigation':
+        specifier: 1.0.1-alpha.206
+        version: 1.0.1-alpha.206
+      '@web3-storage/upload-client':
+        specifier: ^17.1.3
+        version: 17.1.3(encoding@0.1.13)
+      '@web3-storage/w3up-client':
+        specifier: ^17.1.1
+        version: 17.1.1(encoding@0.1.13)
+      '@wnfs-wg/nest':
+        specifier: ^2.0.0
+        version: 2.0.0(encoding@0.1.13)
+      blockstore-core:
+        specifier: ^5.0.2
+        version: 5.0.2
+      blockstore-idb:
+        specifier: ^2.0.1
+        version: 2.0.1
+      idb-keyval:
+        specifier: ^6.2.1
+        version: 6.2.1
+      interface-blockstore:
+        specifier: ^5.3.1
+        version: 5.3.1
+      iso-base:
+        specifier: ^4.0.0
+        version: 4.0.0
+      iso-did:
+        specifier: ^1.6.0
+        version: 1.6.0
+      iso-passkeys:
+        specifier: ^0.2.2
+        version: 0.2.2
+      spellcaster:
+        specifier: ^5.0.2
+        version: 5.0.2
+      tailwindcss:
+        specifier: ^3.4.17
+        version: 3.4.17
+      w3-wnfs:
+        specifier: workspace:*
+        version: link:../../packages/w3-wnfs
+    devDependencies:
+      '@types/dom-navigation':
+        specifier: ^1.0.4
+        version: 1.0.4
+      '@types/node':
+        specifier: ^22.10.2
+        version: 22.10.2
+      typescript:
+        specifier: ^5.7.2
+        version: 5.7.2
+      vite:
+        specifier: ^5.2.6
+        version: 5.2.6(@types/node@22.10.2)
+      vite-plugin-wasm:
+        specifier: ^3.4.1
+        version: 3.4.1(vite@5.2.6(@types/node@22.10.2))
+
   examples/byov:
     dependencies:
       '@noble/curves':
@@ -384,6 +457,63 @@ packages:
 
   '@assemblyscript/loader@0.9.4':
     resolution: {integrity: sha512-HazVq9zwTVwGmqdwYzu7WyQ6FQVZ7SwET0KKQuKm55jD0IfUpZgN0OPIiZG3zV1iSrVYcN0bdwLRXI/VNCYsUA==}
+
+  '@atproto-labs/did-resolver@0.1.6':
+    resolution: {integrity: sha512-qddGpcjKj9SUMlZW1d+/dY/03CDVcmOAlAozXEXsU2H5OT1vFAdMmOp0VbwK0y99RH3DvAQtyQKiRzoPFqp8rA==}
+
+  '@atproto-labs/fetch@0.1.2':
+    resolution: {integrity: sha512-7mQQIRtVenqtdBQKCqoLjyAhPS2aA56EGEjyz5zB3sramM3qkrvzyusr55GAzGDS0tvB6cy9cDEtSLmfK7LUnA==}
+
+  '@atproto-labs/handle-resolver@0.1.5':
+    resolution: {integrity: sha512-3Uv5DUswmiUWn0oO3XML7T6RiM8aq+A4lACBRRasegsr6fytxATJE38UiwDmDRWdXxhftnPlmTWfJ2oZ/pqDWQ==}
+
+  '@atproto-labs/identity-resolver@0.1.8':
+    resolution: {integrity: sha512-gFJ97WcUVrQnhXD16HcTdNUqcT6oZd5tMEYwRxjAw1iPzU08P/CS9DnNv530wLIR4auutq/KpMyKzhZckjJuSA==}
+
+  '@atproto-labs/pipe@0.1.0':
+    resolution: {integrity: sha512-ghOqHFyJlQVFPESzlVHjKroP0tPzbmG5Jms0dNI9yLDEfL8xp4OFPWLX4f6T8mRq69wWs4nIDM3sSsFbFqLa1w==}
+
+  '@atproto-labs/simple-store-memory@0.1.1':
+    resolution: {integrity: sha512-PCRqhnZ8NBNBvLku53O56T0lsVOtclfIrQU/rwLCc4+p45/SBPrRYNBi6YFq5rxZbK6Njos9MCmILV/KLQxrWA==}
+
+  '@atproto-labs/simple-store@0.1.1':
+    resolution: {integrity: sha512-WKILW2b3QbAYKh+w5U2x6p5FqqLl0nAeLwGeDY+KjX01K4Dq3vQTR9b/qNp0jZm48CabPQVrqCv0PPU9LgRRRg==}
+
+  '@atproto/api@0.13.23':
+    resolution: {integrity: sha512-V1Z5kgfSsqlFaC14sjnZL1Psv/9Lq/YKW1w7TIBq948Rtq8l+c6BpGrOH2Ssdcphpqi4OSeSYRsmJJlD6GGJ5w==}
+
+  '@atproto/common-web@0.3.1':
+    resolution: {integrity: sha512-N7wiTnus5vAr+lT//0y8m/FaHHLJ9LpGuEwkwDAeV3LCiPif4m/FS8x/QOYrx1PdZQwKso95RAPzCGWQBH5j6Q==}
+
+  '@atproto/did@0.1.3':
+    resolution: {integrity: sha512-ULD8Gw/KRRwLFZ2Z2L4DjmdOMrg8IYYlcjdSc+GQ2/QJSVnD2zaJJVTLd3vls121wGt/583rNaiZTT2DpBze4w==}
+
+  '@atproto/jwk-jose@0.1.2':
+    resolution: {integrity: sha512-lDwc/6lLn2aZ/JpyyggyjLFsJPMntrVzryyGUx5aNpuTS8SIuc4Ky0REhxqfLopQXJJZCuRRjagHG3uP05/moQ==}
+
+  '@atproto/jwk-webcrypto@0.1.2':
+    resolution: {integrity: sha512-vTBUbUZXh0GI+6KJiPGukmI4BQEHFAij8fJJ4WnReF/hefAs3ISZtrWZHGBebz+q2EcExYlnhhlmxvDzV7veGw==}
+
+  '@atproto/jwk@0.1.1':
+    resolution: {integrity: sha512-6h/bj1APUk7QcV9t/oA6+9DB5NZx9SZru9x+/pV5oHFI9Xz4ZuM5+dq1PfsJV54pZyqdnZ6W6M717cxoC7q7og==}
+
+  '@atproto/lexicon@0.4.4':
+    resolution: {integrity: sha512-QFEmr3rpj/RoAmfX9ALU/asBG/rsVtQZnw+9nOB1/AuIwoxXd+ZyndR6lVUc2+DL4GEjl6W2yvBru5xbQIZWyA==}
+
+  '@atproto/oauth-client-browser@0.3.5':
+    resolution: {integrity: sha512-6zP+vjDRLvvyYl7Oo+zN6OqO1aZ2DbiZa91Eba1MmsRHdmCq6jMwfwNGBzsd1nGQRDDuYG81zEyAY+w5B8fEGQ==}
+
+  '@atproto/oauth-client@0.3.5':
+    resolution: {integrity: sha512-Rr5GKP5YSO28ek1TbyrhO1HpOQYryVm/h9pgYDGzm1diq8kWHsH1se5p1wdFvyBh3Fd4WRw8IE++y2JIeTDkjA==}
+
+  '@atproto/oauth-types@0.2.1':
+    resolution: {integrity: sha512-hDisUXzcq5KU1HMuCYZ8Kcz7BePl7V11bFjjgZvND3mdSphiyBpJ8MCNn3QzAa6cXpFo0w9PDcYMAlCCRZHdVw==}
+
+  '@atproto/syntax@0.3.1':
+    resolution: {integrity: sha512-fzW0Mg1QUOVCWUD3RgEsDt6d1OZ6DdFmbKcDdbzUfh0t4rhtRAC05KbZYmxuMPWDAiJ4BbbQ5dkAc/mNypMXkw==}
+
+  '@atproto/xrpc@0.6.5':
+    resolution: {integrity: sha512-t6u8iPEVbWge5RhzKZDahSzNDYIAxUtop6Q/X/apAZY1rgreVU0/1sSvvRoRFH19d3UIKjYdLuwFqMi9w8nY3Q==}
 
   '@babel/code-frame@7.23.5':
     resolution: {integrity: sha512-CgH3s1a96LipHCmSUmYFPwY7MNx8C3avkq7i4Wl3cfa662ldtUe4VM1TPXX70pfmrlWTb6jLqTYrZyT2ZTJBgA==}
@@ -2195,6 +2325,9 @@ packages:
     resolution: {integrity: sha512-wvUjBtSGN7+7SjNpq/9M2Tg350UZD3q62IFZLbRAR1bSMlCo1ZaeW+BJ+D090e4hIIZLBcTDWe4Mh4jvUDajzQ==}
     engines: {node: '>= 0.4'}
 
+  await-lock@2.2.2:
+    resolution: {integrity: sha512-aDczADvlvTGajTDjcjpJMqRkOF6Qdz3YbPZm/PyW6tKPkx2hlYBzxMhEywM/tU72HrVZjgl5VCdRuMlA7pZ8Gw==}
+
   balanced-match@1.0.2:
     resolution: {integrity: sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==}
 
@@ -3596,6 +3729,9 @@ packages:
   iso-base@4.0.0:
     resolution: {integrity: sha512-Vf+6r7XlP+LQD0HSR0ZBLSj/mwuP+59ElbgMKT+iFSnkBW2RzRohQScgKfPCYbaGZAjEdbi40eYq28E/RAnrVA==}
 
+  iso-datestring-validator@2.2.2:
+    resolution: {integrity: sha512-yLEMkBbLZTlVQqOnQ4FiMujR6T4DEcCb1xizmvXS+OxuhwcbtynoosRzdMA69zZCShCNAbi+gJ71FxZBBXx1SA==}
+
   iso-did@1.6.0:
     resolution: {integrity: sha512-DBq2MzTMGMJgYs/3jhj+h/EuDuQs7NWUYwNtXpBgbTRl6CVqsu0nAHqzxIzaZYJbb05msnq7KUwMCZmLCQ9asA==}
 
@@ -3705,6 +3841,9 @@ packages:
   jiti@1.21.7:
     resolution: {integrity: sha512-/imKNG4EbWNrVjoNC/1H5/9GFy+tqjGBHCaSsN+P2RnPqjsLmv6UD3Ej+Kj8nBWaRAwyk7kK5ZUc+OEatnTR3A==}
     hasBin: true
+
+  jose@5.9.6:
+    resolution: {integrity: sha512-AMlnetc9+CV9asI19zHmrgS/WYsWUwCn2R7RzlbJWD7F9eWYUTGyBmU9o6PxngtLGOiDGPRu+Uc4fhKzbpteZQ==}
 
   js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
@@ -4916,6 +5055,10 @@ packages:
     resolution: {integrity: sha512-4oGOVZWTu5sl89PtCDnhQBSt7/vL1zVEwAfxH1p49JhTosxzVQWYBYFRFZ8nJmo0G6f824iyP/44BFAwIoKvIA==}
     engines: {node: '>= 4.5.0'}
 
+  tlds@1.255.0:
+    resolution: {integrity: sha512-tcwMRIioTcF/FcxLev8MJWxCp+GUALRhFEqbDoZrnowmKSGqPrl5pqS+Sut2m8BgJ6S4FExCSSpGffZ0Tks6Aw==}
+    hasBin: true
+
   to-fast-properties@2.0.0:
     resolution: {integrity: sha512-/OaKK0xYrs3DmxRYqL/yDc+FxFUVYhDlXMhRmv3z915w2HF1tnN1omB354j8VUGO/hbRzyD6Y3sA7v7GS/ceog==}
     engines: {node: '>=4'}
@@ -5091,6 +5234,9 @@ packages:
 
   uint8arraylist@2.4.8:
     resolution: {integrity: sha512-vc1PlGOzglLF0eae1M8mLRTBivsvrGsdmJ5RbK3e+QRvRLOZfZhQROTwH/OfyF3+ZVUg9/8hE8bmKP2CvP9quQ==}
+
+  uint8arrays@3.0.0:
+    resolution: {integrity: sha512-HRCx0q6O9Bfbp+HHSfQQKD7wU70+lydKVt4EghkdOvlK/NlrF90z+eXV34mUd48rNvVJXwkrMSPpCATkct8fJA==}
 
   uint8arrays@3.1.1:
     resolution: {integrity: sha512-+QJa8QRnbdXVpHYjLoTpJIdCTiw9Ir62nocClWuXIq2JIh4Uta0cQsTSpFL678p2CN8B+XSApwcU+pQEqVpKWg==}
@@ -5388,6 +5534,9 @@ packages:
   zod@3.22.4:
     resolution: {integrity: sha512-iC+8Io04lddc+mVqQ9AZ7OQ2MrUKGN+oIQyq1vemgt46jwCwLfhq7/pwnBnNXXXZb8VTVLKwp9EDkx+ryxIWmg==}
 
+  zod@3.24.1:
+    resolution: {integrity: sha512-muH7gBL9sI1nciMZV67X5fTKKBLtwpZ5VBp1vsOQzj1MhrBZ4wlVCm3gedKZWLp0Oyel8sIGfeiz54Su+OVT+A==}
+
 snapshots:
 
   '@aashutoshrathi/word-wrap@1.2.6': {}
@@ -5397,6 +5546,126 @@ snapshots:
   '@arr/every@1.0.1': {}
 
   '@assemblyscript/loader@0.9.4': {}
+
+  '@atproto-labs/did-resolver@0.1.6':
+    dependencies:
+      '@atproto-labs/fetch': 0.1.2
+      '@atproto-labs/pipe': 0.1.0
+      '@atproto-labs/simple-store': 0.1.1
+      '@atproto-labs/simple-store-memory': 0.1.1
+      '@atproto/did': 0.1.3
+      zod: 3.24.1
+
+  '@atproto-labs/fetch@0.1.2':
+    dependencies:
+      '@atproto-labs/pipe': 0.1.0
+    optionalDependencies:
+      zod: 3.24.1
+
+  '@atproto-labs/handle-resolver@0.1.5':
+    dependencies:
+      '@atproto-labs/simple-store': 0.1.1
+      '@atproto-labs/simple-store-memory': 0.1.1
+      '@atproto/did': 0.1.3
+      zod: 3.24.1
+
+  '@atproto-labs/identity-resolver@0.1.8':
+    dependencies:
+      '@atproto-labs/did-resolver': 0.1.6
+      '@atproto-labs/handle-resolver': 0.1.5
+      '@atproto/syntax': 0.3.1
+
+  '@atproto-labs/pipe@0.1.0': {}
+
+  '@atproto-labs/simple-store-memory@0.1.1':
+    dependencies:
+      '@atproto-labs/simple-store': 0.1.1
+      lru-cache: 10.4.3
+
+  '@atproto-labs/simple-store@0.1.1': {}
+
+  '@atproto/api@0.13.23':
+    dependencies:
+      '@atproto/common-web': 0.3.1
+      '@atproto/lexicon': 0.4.4
+      '@atproto/syntax': 0.3.1
+      '@atproto/xrpc': 0.6.5
+      await-lock: 2.2.2
+      multiformats: 9.9.0
+      tlds: 1.255.0
+      zod: 3.24.1
+
+  '@atproto/common-web@0.3.1':
+    dependencies:
+      graphemer: 1.4.0
+      multiformats: 9.9.0
+      uint8arrays: 3.0.0
+      zod: 3.24.1
+
+  '@atproto/did@0.1.3':
+    dependencies:
+      zod: 3.24.1
+
+  '@atproto/jwk-jose@0.1.2':
+    dependencies:
+      '@atproto/jwk': 0.1.1
+      jose: 5.9.6
+
+  '@atproto/jwk-webcrypto@0.1.2':
+    dependencies:
+      '@atproto/jwk': 0.1.1
+      '@atproto/jwk-jose': 0.1.2
+
+  '@atproto/jwk@0.1.1':
+    dependencies:
+      multiformats: 9.9.0
+      zod: 3.24.1
+
+  '@atproto/lexicon@0.4.4':
+    dependencies:
+      '@atproto/common-web': 0.3.1
+      '@atproto/syntax': 0.3.1
+      iso-datestring-validator: 2.2.2
+      multiformats: 9.9.0
+      zod: 3.24.1
+
+  '@atproto/oauth-client-browser@0.3.5':
+    dependencies:
+      '@atproto-labs/did-resolver': 0.1.6
+      '@atproto-labs/handle-resolver': 0.1.5
+      '@atproto-labs/simple-store': 0.1.1
+      '@atproto/did': 0.1.3
+      '@atproto/jwk': 0.1.1
+      '@atproto/jwk-webcrypto': 0.1.2
+      '@atproto/oauth-client': 0.3.5
+      '@atproto/oauth-types': 0.2.1
+
+  '@atproto/oauth-client@0.3.5':
+    dependencies:
+      '@atproto-labs/did-resolver': 0.1.6
+      '@atproto-labs/fetch': 0.1.2
+      '@atproto-labs/handle-resolver': 0.1.5
+      '@atproto-labs/identity-resolver': 0.1.8
+      '@atproto-labs/simple-store': 0.1.1
+      '@atproto-labs/simple-store-memory': 0.1.1
+      '@atproto/did': 0.1.3
+      '@atproto/jwk': 0.1.1
+      '@atproto/oauth-types': 0.2.1
+      '@atproto/xrpc': 0.6.5
+      multiformats: 9.9.0
+      zod: 3.24.1
+
+  '@atproto/oauth-types@0.2.1':
+    dependencies:
+      '@atproto/jwk': 0.1.1
+      zod: 3.24.1
+
+  '@atproto/syntax@0.3.1': {}
+
+  '@atproto/xrpc@0.6.5':
+    dependencies:
+      '@atproto/lexicon': 0.4.4
+      zod: 3.24.1
 
   '@babel/code-frame@7.23.5':
     dependencies:
@@ -5958,7 +6227,7 @@ snapshots:
 
   '@ipld/car@5.3.0':
     dependencies:
-      '@ipld/dag-cbor': 9.2.0
+      '@ipld/dag-cbor': 9.2.2
       cborg: 4.1.4
       multiformats: 13.3.1
       varint: 6.0.0
@@ -5984,7 +6253,7 @@ snapshots:
 
   '@ipld/dag-ucan@3.4.0':
     dependencies:
-      '@ipld/dag-cbor': 9.2.0
+      '@ipld/dag-cbor': 9.2.2
       '@ipld/dag-json': 10.2.0
       multiformats: 11.0.2
 
@@ -6108,8 +6377,8 @@ snapshots:
       dns-packet: 5.6.1
       hashlru: 2.3.0
       p-queue: 8.0.1
-      progress-events: 1.0.0
-      uint8arrays: 5.0.3
+      progress-events: 1.0.1
+      uint8arrays: 5.1.0
 
   '@multiformats/multiaddr@12.2.1':
     dependencies:
@@ -6168,13 +6437,13 @@ snapshots:
       '@peculiar/asn1-schema': 2.3.8
       '@peculiar/asn1-x509': 2.3.8
       asn1js: 3.0.5
-      tslib: 2.6.2
+      tslib: 2.8.1
 
   '@peculiar/asn1-schema@2.3.8':
     dependencies:
       asn1js: 3.0.5
       pvtsutils: 1.3.5
-      tslib: 2.6.2
+      tslib: 2.8.1
 
   '@peculiar/asn1-x509@2.3.8':
     dependencies:
@@ -6182,7 +6451,7 @@ snapshots:
       asn1js: 3.0.5
       ipaddr.js: 2.1.0
       pvtsutils: 1.3.5
-      tslib: 2.6.2
+      tslib: 2.8.1
 
   '@perma/map@1.0.3':
     dependencies:
@@ -6429,7 +6698,7 @@ snapshots:
 
   '@types/dns-packet@5.6.5':
     dependencies:
-      '@types/node': 20.11.30
+      '@types/node': 22.10.2
 
   '@types/dom-navigation@1.0.4': {}
 
@@ -6699,7 +6968,7 @@ snapshots:
   '@ucanto/validator@9.0.2':
     dependencies:
       '@ipld/car': 5.3.0
-      '@ipld/dag-cbor': 9.2.0
+      '@ipld/dag-cbor': 9.2.2
       '@ucanto/core': 10.0.1
       '@ucanto/interface': 10.0.1
       multiformats: 11.0.2
@@ -6828,7 +7097,7 @@ snapshots:
 
   '@web3-storage/blob-index@1.0.5':
     dependencies:
-      '@ipld/dag-cbor': 9.2.0
+      '@ipld/dag-cbor': 9.2.2
       '@storacha/one-webcrypto': 1.0.1
       '@ucanto/core': 10.0.1
       '@ucanto/interface': 10.0.1
@@ -6918,7 +7187,7 @@ snapshots:
   '@web3-storage/upload-client@17.1.3(encoding@0.1.13)':
     dependencies:
       '@ipld/car': 5.3.0
-      '@ipld/dag-cbor': 9.2.0
+      '@ipld/dag-cbor': 9.2.2
       '@ipld/dag-ucan': 3.4.0
       '@ipld/unixfs': 2.2.0
       '@ucanto/client': 9.0.1
@@ -6927,7 +7196,7 @@ snapshots:
       '@ucanto/transport': 9.1.1
       '@web3-storage/blob-index': 1.0.5
       '@web3-storage/capabilities': 18.0.1
-      '@web3-storage/data-segment': 5.1.0
+      '@web3-storage/data-segment': 5.3.0
       '@web3-storage/filecoin-client': 3.3.5
       ipfs-utils: 9.0.14(encoding@0.1.13)
       multiformats: 12.1.3
@@ -6997,9 +7266,9 @@ snapshots:
       ipfs-unixfs-exporter: 13.5.0
       ipfs-unixfs-importer: 15.2.4(encoding@0.1.13)
       it-all: 3.0.4
-      multiformats: 13.1.0
+      multiformats: 13.3.1
       p-debounce: 4.0.0
-      uint8arrays: 5.0.3
+      uint8arrays: 5.1.0
       wnfs: 0.2.2
     transitivePeerDependencies:
       - encoding
@@ -7190,7 +7459,7 @@ snapshots:
     dependencies:
       pvtsutils: 1.3.5
       pvutils: 1.1.3
-      tslib: 2.6.2
+      tslib: 2.8.1
 
   assert@2.1.0:
     dependencies:
@@ -7214,6 +7483,8 @@ snapshots:
   available-typed-arrays@1.0.7:
     dependencies:
       possible-typed-array-names: 1.0.0
+
+  await-lock@2.2.2: {}
 
   balanced-match@1.0.2: {}
 
@@ -7377,7 +7648,7 @@ snapshots:
 
   carstream@2.3.0:
     dependencies:
-      '@ipld/dag-cbor': 9.2.0
+      '@ipld/dag-cbor': 9.2.2
       multiformats: 13.3.1
       uint8arraylist: 2.4.8
 
@@ -7607,6 +7878,10 @@ snapshots:
       ms: 2.1.2
     optionalDependencies:
       supports-color: 8.1.1
+
+  debug@4.4.0:
+    dependencies:
+      ms: 2.1.3
 
   debug@4.4.0(supports-color@8.1.1):
     dependencies:
@@ -8638,7 +8913,7 @@ snapshots:
   hamt-sharding@3.0.6:
     dependencies:
       sparse-array: 1.3.2
-      uint8arrays: 5.0.3
+      uint8arrays: 5.1.0
 
   has-bigints@1.0.2: {}
 
@@ -8782,7 +9057,7 @@ snapshots:
 
   ipfs-unixfs-exporter@13.5.0:
     dependencies:
-      '@ipld/dag-cbor': 9.2.0
+      '@ipld/dag-cbor': 9.2.2
       '@ipld/dag-json': 10.2.0
       '@ipld/dag-pb': 4.1.0
       '@multiformats/murmur3': 2.1.8
@@ -8790,7 +9065,7 @@ snapshots:
       hamt-sharding: 3.0.6
       interface-blockstore: 5.3.1
       ipfs-unixfs: 11.1.3
-      it-filter: 3.0.4
+      it-filter: 3.1.1
       it-last: 3.0.4
       it-map: 3.0.5
       it-parallel: 3.0.6
@@ -8798,7 +9073,7 @@ snapshots:
       it-pushable: 3.2.3
       multiformats: 13.3.1
       p-queue: 8.0.1
-      progress-events: 1.0.0
+      progress-events: 1.0.1
 
   ipfs-unixfs-importer@15.2.4(encoding@0.1.13):
     dependencies:
@@ -8814,10 +9089,10 @@ snapshots:
       it-first: 3.0.4
       it-parallel-batch: 3.0.4
       multiformats: 13.3.1
-      progress-events: 1.0.0
+      progress-events: 1.0.1
       rabin-wasm: 0.1.5(encoding@0.1.13)
       uint8arraylist: 2.4.8
-      uint8arrays: 5.0.3
+      uint8arrays: 5.1.0
     transitivePeerDependencies:
       - encoding
       - supports-color
@@ -8915,7 +9190,7 @@ snapshots:
 
   is-core-module@2.13.1:
     dependencies:
-      hasown: 2.0.0
+      hasown: 2.0.2
 
   is-date-object@1.0.5:
     dependencies:
@@ -9054,6 +9329,8 @@ snapshots:
       base-x: 4.0.0
       bigint-mod-arith: 3.3.1
 
+  iso-datestring-validator@2.2.2: {}
+
   iso-did@1.6.0:
     dependencies:
       did-resolver: 4.1.0
@@ -9165,9 +9442,9 @@ snapshots:
 
   it-pipe@3.0.1:
     dependencies:
-      it-merge: 3.0.3
+      it-merge: 3.0.5
       it-pushable: 3.2.3
-      it-stream-types: 2.0.1
+      it-stream-types: 2.0.2
 
   it-pushable@3.2.3:
     dependencies:
@@ -9201,6 +9478,8 @@ snapshots:
       '@pkgjs/parseargs': 0.11.0
 
   jiti@1.21.7: {}
+
+  jose@5.9.6: {}
 
   js-tokens@4.0.0: {}
 
@@ -10061,20 +10340,20 @@ snapshots:
       '@protobufjs/path': 1.1.2
       '@protobufjs/pool': 1.1.0
       '@protobufjs/utf8': 1.1.0
-      '@types/node': 20.11.30
+      '@types/node': 22.10.2
       long: 5.2.3
 
   protons-runtime@5.4.0:
     dependencies:
       uint8-varint: 2.0.4
       uint8arraylist: 2.4.8
-      uint8arrays: 5.0.3
+      uint8arrays: 5.1.0
 
   punycode@2.3.0: {}
 
   pvtsutils@1.3.5:
     dependencies:
-      tslib: 2.6.2
+      tslib: 2.8.1
 
   pvutils@1.1.3: {}
 
@@ -10093,7 +10372,7 @@ snapshots:
     dependencies:
       '@assemblyscript/loader': 0.9.4
       bl: 5.1.0
-      debug: 4.3.4(supports-color@8.1.1)
+      debug: 4.4.0
       minimist: 1.2.8
       node-fetch: 2.7.0(encoding@0.1.13)
       readable-stream: 3.6.2
@@ -10533,7 +10812,7 @@ snapshots:
 
   sync-multihash-sha2@1.0.0:
     dependencies:
-      '@noble/hashes': 1.3.3
+      '@noble/hashes': 1.4.0
 
   synckit@0.6.2:
     dependencies:
@@ -10604,6 +10883,8 @@ snapshots:
   throttled-queue@2.1.4: {}
 
   timestamp-nano@1.0.1: {}
+
+  tlds@1.255.0: {}
 
   to-fast-properties@2.0.0: {}
 
@@ -10773,13 +11054,17 @@ snapshots:
   uint8-varint@2.0.4:
     dependencies:
       uint8arraylist: 2.4.8
-      uint8arrays: 5.0.3
+      uint8arrays: 5.1.0
 
   uint8array-extras@0.3.0: {}
 
   uint8arraylist@2.4.8:
     dependencies:
-      uint8arrays: 5.0.3
+      uint8arrays: 5.1.0
+
+  uint8arrays@3.0.0:
+    dependencies:
+      multiformats: 9.9.0
 
   uint8arrays@3.1.1:
     dependencies:
@@ -10883,7 +11168,7 @@ snapshots:
   vite@5.2.6(@types/node@22.10.2):
     dependencies:
       esbuild: 0.20.2
-      postcss: 8.4.38
+      postcss: 8.4.49
       rollup: 4.13.0
     optionalDependencies:
       '@types/node': 22.10.2
@@ -11119,3 +11404,5 @@ snapshots:
       zod: 3.22.4
 
   zod@3.22.4: {}
+
+  zod@3.24.1: {}
