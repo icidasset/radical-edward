@@ -7,6 +7,7 @@ import * as Crypto from '../crypto'
 import * as FS from '../fs'
 import * as Passkey from '../passkey'
 import { blockstore, fileSystem, w3client } from '../signals'
+import { reactiveElement } from '../common'
 
 /**
  *
@@ -16,7 +17,18 @@ export function ConnectStoracha() {
     {
       className: 'border-b border-stone-800 mb-12 pb-12 text-center',
     },
-    [tags.button({ onclick: connect }, text('🌶️ Connect with Storacha'))]
+    reactiveElement(() => {
+      const client = w3client()
+
+      return tags.button(
+        { onclick: connect },
+        text(
+          client.currentSpace() === undefined
+            ? '🌶️ Connect with Storacha'
+            : '☑️ Connected to Storacha'
+        )
+      )
+    })
   )
 }
 
