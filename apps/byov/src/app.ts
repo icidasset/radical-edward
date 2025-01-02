@@ -1,4 +1,4 @@
-import { tags } from 'spellcaster/hyperscript.js'
+import { tags, text } from 'spellcaster/hyperscript.js'
 
 import * as Routing from './routing'
 import { PageNav } from './components/page-nav'
@@ -10,6 +10,7 @@ import { page } from './signals'
 import { UploadVideo } from './components/upload-video'
 import { ConnectStoracha } from './components/connect-storacha'
 import { ConnectAtProto } from './components/connect-atproto'
+import { Video } from './components/video'
 
 // TODO:
 // * Upload video to private folder
@@ -40,15 +41,22 @@ function App() {
   return tags.div(
     {},
     reactiveElement(() => {
-      switch (page()) {
+      const p = page()
+
+      console.log('page', p)
+
+      switch (p.id) {
         case 'all-videos': {
           return AllVideos()
         }
         case 'my-channel': {
           return MyChannel()
         }
+        case 'video': {
+          return Video(p.videoCID)
+        }
         default: {
-          return tags.span({}, [])
+          return tags.span({}, text('Page not found.'))
         }
       }
     })

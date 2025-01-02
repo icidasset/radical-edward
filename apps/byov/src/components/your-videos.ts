@@ -9,6 +9,7 @@ import {
 } from '../fs/videos'
 import { reactiveElement } from '../common'
 import { fileSystem, setVideos, videos } from '../signals'
+import { Pages } from '../routing'
 
 /**
  *
@@ -127,8 +128,8 @@ function renderVideo(video: Video) {
       text(video.public ? '🔐 MAKE PRIVATE' : '🌍 MAKE PUBLIC')
     ),
     tags.span({}, text(video.public ? ' / ' : '')),
-    video.url === undefined
-      ? tags.span({}, [])
-      : tags.a({ href: video.url }, text('🔗 URL')),
+    video.public && video.cid !== undefined
+      ? tags.a({ href: Pages.Video(video.cid).url }, text('🍿 WATCH'))
+      : tags.span({}, []),
   ])
 }

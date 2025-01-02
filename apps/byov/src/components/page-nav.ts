@@ -4,8 +4,6 @@ import { page } from '../signals'
 
 /**
  *
- * @param page
- * @param setPage
  */
 export function PageNav() {
   return tags.nav(
@@ -16,11 +14,11 @@ export function PageNav() {
     reactiveElements(() => [
       NavItem('All_Videos', {
         href: '/',
-        isActive: page() === 'all-videos',
+        isActive: page().id === 'all-videos',
       }),
       NavItem('My_Channel', {
         href: '/me/',
-        isActive: page() === 'my-channel',
+        isActive: page().id === 'my-channel',
       }),
     ])
   )

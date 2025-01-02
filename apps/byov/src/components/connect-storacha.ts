@@ -40,7 +40,7 @@ export function ConnectStoracha() {
  * @param event
  */
 async function connect(event: Event) {
-  if (confirm('Register new passkey?')) {
+  if (confirm('Register new passkey? Cancel to reuse old passkey.')) {
     await Passkey.create({
       uniqueId: 'BYOV FileSystem',
     })
@@ -65,7 +65,7 @@ async function connect(event: Event) {
   if (event.target === null) return
 
   const target = event.target as HTMLElement
-  target.textContent = '🌶️ Connecting ...'
+  target.textContent = '🌶️ Connecting ... Check your email'
 
   const client = w3client()
   const account = await client.login(email as `${string}@${string}`)
@@ -75,9 +75,6 @@ async function connect(event: Event) {
 
   const spaceName = `BYOV/${did.toString()}`
   const existingSpace = spaces.find((space) => space.name === spaceName)
-
-  console.log(existingSpace)
-  console.log(spaces)
 
   let fs = fileSystem()
 
@@ -113,5 +110,5 @@ async function connect(event: Event) {
   const encryptedRootKey = await Crypto.encrypt(capsuleKey, encryptionKey)
   await fs.write(['public', '.passkey'], 'bytes', encryptedRootKey)
 
-  target.textContent = '🌶️ Connected'
+  target.textContent = '☑️ Connected to Storacha'
 }

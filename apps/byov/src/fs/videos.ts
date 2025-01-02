@@ -13,6 +13,7 @@ export const PRIVATE_VIDEO_PATH: Path.PartitionedNonEmpty<Path.Private> = [
 
 export interface Video {
   id: string
+  cid?: string
   name: string
   public: boolean
   url?: string
@@ -52,6 +53,7 @@ export async function listVideos(): Promise<Video[]> {
             ? undefined
             : `https://w3s.link/ipfs/${cid.toString()}`,
         name,
+        cid,
       }
     })
   )

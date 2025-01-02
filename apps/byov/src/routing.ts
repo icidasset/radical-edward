@@ -2,10 +2,41 @@ import { signal } from 'spellcaster'
 
 // 🏡
 
+export interface AllVideos {
+  id: 'all-videos'
+  url: '/'
+}
+
+export interface MyChannel {
+  id: 'my-channel'
+  url: '/me'
+}
+
+export interface UploadVideo {
+  id: 'upload-video'
+  url: '/upload'
+}
+
+export interface Video {
+  id: 'video'
+  videoCID: string
+  url: string
+}
+
+const PAGES_ALL_VIDEOS: AllVideos = { id: 'all-videos', url: '/' }
+const PAGES_MY_CHANNEL: MyChannel = { id: 'my-channel', url: '/me' }
+const PAGES_UPLOAD_VIDEO: UploadVideo = { id: 'upload-video', url: '/upload' }
+const PAGES_VIDEO: (cid: string) => Video = (cid: string) => ({
+  id: 'video',
+  videoCID: cid,
+  url: `/video/${cid}`,
+})
+
 export const Pages = {
-  AllVideos: { id: 'all-videos', url: () => '/' },
-  MyChannel: { id: 'my-channel', url: () => '/me/' },
-  UploadVideo: { id: 'upload-video', url: () => '/upload/' },
+  AllVideos: PAGES_ALL_VIDEOS,
+  MyChannel: PAGES_MY_CHANNEL,
+  UploadVideo: PAGES_UPLOAD_VIDEO,
+  Video: PAGES_VIDEO,
 }
 
 // 🔮
@@ -18,7 +49,7 @@ export const [page, setPage] = signal(initialPage())
  *
  */
 export function initialPage() {
-  return pageFromPath(window.location.pathname) ?? 'all-videos'
+  return pageFromPath(window.location.pathname) ?? Pages.AllVideos
 }
 
 /**
@@ -42,12 +73,17 @@ export function intercept() {
  * @param path
  */
 export function pageFromPath(path: string) {
-  switch (path) {
-    case '/': {
-      return Pages.AllVideos.id
+  const parts = path.replace(/(^\/|\/$)/, '').split('/')
+
+  switch (parts[0]) {
+    case '': {
+      return Pages.AllVideos
     }
-    case '/me/': {
-      return Pages.MyChannel.id
+    case 'me': {
+      return Pages.MyChannel
+    }
+    case 'video': {
+      return Pages.Video(parts[1])
     }
   }
 }

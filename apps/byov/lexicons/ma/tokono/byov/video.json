@@ -8,10 +8,13 @@
       "key": "any",
       "record": {
         "type": "object",
-        "required": ["cid", "serviceProvider"],
+        "required": ["cid", "createdAt", "serviceProvider"],
         "properties": {
           "cid": {
             "type": "string"
+          },
+          "createdAt": {
+            "type": "datetime"
           },
           "serviceProvider": {
             "type": "string"
