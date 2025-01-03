@@ -1,6 +1,7 @@
+import { Agent } from '@atproto/api'
 import { signal } from 'spellcaster'
 
-import type { Video } from './fs/videos'
+import type { Video } from './videos'
 import { setup } from './setup'
 import * as ATProto from './atproto'
 
@@ -18,8 +19,11 @@ export const [isAuthenticated, setIsAuthenticated] = signal(
 
 // ATPROTO
 
-export const [atSession, setATSession] = signal(
-  await ATProto.client.init().then((r) => r?.session)
+export const [atAgent, setATAgent] = signal(
+  await ATProto.client
+    .init()
+    .then((r) => r?.session)
+    .then((session) => (session === undefined ? undefined : new Agent(session)))
 )
 
 // MORE SIGNALS
@@ -34,7 +38,7 @@ export const [videos, setVideos] = signal<'loading' | Video[]>([])
  *
  */
 export function isConnectedToATProto(): boolean {
-  return atSession() !== undefined
+  return atAgent() !== undefined
 }
 
 /**

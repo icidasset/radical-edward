@@ -1,19 +1,27 @@
+import type { Events } from '@wnfs-wg/nest'
 import { effect } from 'spellcaster'
 import { tags, text } from 'spellcaster/hyperscript.js'
 
+import { AtUri } from '@atproto/api'
 import {
   PRIVATE_VIDEO_PATH,
   PUBLIC_VIDEO_PATH,
+  type PublicVideo,
   type Video,
   listVideos,
-} from '../fs/videos'
+} from '../videos'
 import { reactiveElement } from '../common'
-import { fileSystem, setVideos, videos } from '../signals'
-import { Pages } from '../routing'
+import {
+  atAgent,
+  fileSystem,
+  isConnectedToStoracha,
+  setVideos,
+  videos,
+} from '../signals'
+import { PROVIDERS } from '../providers'
 
 /**
  *
- * @param fs
  */
 export function YourVideos() {
   let timeoutId: undefined | ReturnType<typeof setTimeout>
@@ -30,11 +38,10 @@ export function YourVideos() {
     clearTimeout(timeoutId)
     setVideos(list)
 
-    fileSystem().on('commit', async ({ modifications }) => {
-      console.log('🔮 Commit', modifications)
-      const videoListChanged = modifications.some((m) => m.path[1] === 'Videos')
-      if (videoListChanged) setVideos(await listVideos())
-    })
+    const fs = fileSystem()
+
+    fs.off('commit', onCommit)
+    fs.on('commit', onCommit)
   })
 
   // Render
@@ -76,7 +83,17 @@ export function YourVideos() {
 
 /**
  *
- * @param fs
+ * @param root0
+ * @param root0.modifications
+ */
+async function onCommit({ modifications }: Events['commit']) {
+  console.log('🔮 Commit', modifications)
+  const videoListChanged = modifications.some((m) => m.path[1] === 'Videos')
+  if (videoListChanged) setVideos(await listVideos())
+}
+
+/**
+ *
  * @param video
  */
 function renderVideo(video: Video) {
@@ -128,8 +145,70 @@ function renderVideo(video: Video) {
       text(video.public ? '🔐 MAKE PRIVATE' : '🌍 MAKE PUBLIC')
     ),
     tags.span({}, text(video.public ? ' / ' : '')),
-    video.public && video.cid !== undefined
-      ? tags.a({ href: Pages.Video(video.cid).url }, text('🍿 WATCH'))
+    isConnectedToStoracha() && video.public && video.cid !== undefined
+      ? tags.a(
+          {
+            className: 'cursor-pointer',
+            onclick:
+              video.published.length > 0 ? unpublish(video) : publish(video),
+          },
+          text(video.published.length > 0 ? '🌋 UNPUBLISH' : '🦋 PUBLISH')
+        )
       : tags.span({}, []),
+
+    // video.public && video.cid !== undefined
+    //   ? tags.a({ href: Pages.Video(video.cid).url }, text('🍿 WATCH'))
+    //   : tags.span({}, []),
   ])
+}
+
+/**
+ *
+ * @param video
+ */
+function publish(video: PublicVideo) {
+  return async () => {
+    const agent = atAgent()
+    if (agent === undefined) return
+
+    const did = agent.assertDid
+
+    await agent.com.atproto.repo.createRecord({
+      repo: did,
+      collection: 'ma.tokono.byov.video',
+      record: {
+        $type: 'ma.tokono.byov.video',
+        cid: video.cid,
+        serviceProdiver: PROVIDERS.STORACHA,
+        createdAt: new Date().toISOString(),
+      },
+    })
+
+    setVideos(await listVideos())
+  }
+}
+
+/**
+ *
+ * @param video
+ */
+function unpublish(video: PublicVideo) {
+  return async () => {
+    const agent = atAgent()
+    if (agent === undefined) return
+
+    const did = agent.assertDid
+    const promises = video.published.map(async (rec) => {
+      const uri = new AtUri(rec.uri)
+      await agent.com.atproto.repo.deleteRecord({
+        repo: did,
+        collection: 'ma.tokono.byov.video',
+        rkey: uri.rkey,
+      })
+    })
+
+    await Promise.all(promises)
+
+    setVideos(await listVideos())
+  }
 }

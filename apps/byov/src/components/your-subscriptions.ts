@@ -1,9 +1,8 @@
-import { Agent } from '@atproto/api'
 import { effect } from 'spellcaster'
 import { tags, text } from 'spellcaster/hyperscript.js'
 
 import { reactiveElement } from '../common'
-import { atSession } from '../signals'
+import { atAgent } from '../signals'
 
 /**
  *
@@ -12,10 +11,8 @@ export function YourSubscriptions() {
   // const [subs, _] = signal('loading')
 
   effect(async () => {
-    const session = atSession()
-    if (session === undefined) return
-
-    const agent = new Agent(session)
+    const agent = atAgent()
+    if (agent === undefined) return
 
     const list = await agent.com.atproto.repo.listRecords({
       repo: agent.assertDid,
