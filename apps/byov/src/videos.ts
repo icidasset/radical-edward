@@ -45,7 +45,6 @@ export async function listVideos(): Promise<Video[]> {
 
   if (agent !== undefined) {
     published = await listPublished(agent)
-    console.log(published)
   }
 
   // File system
@@ -121,11 +120,10 @@ async function listPublished(agent: Agent, cursor?: string): Promise<Record[]> {
       limit: 100,
     })
     .then(async (resp: Response) => {
-      if (resp.data.cursor !== undefined)
-        return await listPublished(agent, resp.data.cursor).then(
-          (records: Record[]) => [...resp.data.records, ...records]
-        )
+      if (resp.data.cursor === undefined) return resp.data.records
 
-      return resp.data.records
+      return await listPublished(agent, resp.data.cursor).then(
+        (records: Record[]) => [...resp.data.records, ...records]
+      )
     })
 }

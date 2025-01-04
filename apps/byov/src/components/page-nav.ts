@@ -1,6 +1,6 @@
 import { tags, text } from 'spellcaster/hyperscript.js'
 import { reactiveElements } from '../common'
-import { page } from '../signals'
+import { atProfile, page } from '../signals'
 
 /**
  *
@@ -11,16 +11,24 @@ export function PageNav() {
       id: 'page-nav',
       className: 'justify-self-end mt-3 space-x-4',
     },
-    reactiveElements(() => [
-      NavItem('All_Videos', {
-        href: '/',
-        isActive: page().id === 'all-videos',
-      }),
-      NavItem('My_Channel', {
-        href: '/me/',
-        isActive: page().id === 'my-channel',
-      }),
-    ])
+    reactiveElements(() => {
+      return [
+        NavItem('All_Videos', {
+          href: '/',
+          isActive: page().id === 'all-videos',
+        }),
+        NavItem('My_Videos', {
+          href: '/me/',
+          isActive: page().id === 'my-videos',
+        }),
+        atProfile() === undefined
+          ? tags.span({}, [])
+          : NavItem('My_Channel', {
+              href: `/channel/${atProfile()?.data?.did}`,
+              isActive: page().id === 'channel',
+            }),
+      ]
+    })
   )
 }
 

@@ -11,6 +11,7 @@ import { UploadVideo } from './components/upload-video'
 import { ConnectStoracha } from './components/connect-storacha'
 import { ConnectAtProto } from './components/connect-atproto'
 import { Video } from './components/video'
+import { Channel } from './components/channel'
 
 // TODO:
 // * Upload video to private folder
@@ -43,14 +44,15 @@ function App() {
     reactiveElement(() => {
       const p = page()
 
-      console.log('page', p)
-
       switch (p.id) {
         case 'all-videos': {
           return AllVideos()
         }
-        case 'my-channel': {
-          return MyChannel()
+        case 'channel': {
+          return Channel(p.profileDID)
+        }
+        case 'my-videos': {
+          return MyVideos()
         }
         case 'video': {
           return Video(p.videoCID)
@@ -63,7 +65,7 @@ function App() {
   )
 }
 
-// PAGE :: ALL VIDEOS
+// PAGES
 
 /**
  *
@@ -72,12 +74,10 @@ function AllVideos() {
   return tags.div({}, [YourSubscriptions(), VideosOnBluesky()])
 }
 
-// PAGE :: MY CHANNEL
-
 /**
  *
  */
-function MyChannel() {
+function MyVideos() {
   return tags.div({}, [
     ConnectStoracha(),
     ConnectAtProto(),

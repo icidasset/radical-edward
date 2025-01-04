@@ -87,7 +87,6 @@ export function YourVideos() {
  * @param root0.modifications
  */
 async function onCommit({ modifications }: Events['commit']) {
-  console.log('🔮 Commit', modifications)
   const videoListChanged = modifications.some((m) => m.path[1] === 'Videos')
   if (videoListChanged) setVideos(await listVideos())
 }
@@ -178,8 +177,10 @@ function publish(video: PublicVideo) {
       collection: 'ma.tokono.byov.video',
       record: {
         $type: 'ma.tokono.byov.video',
+        id: video.id,
         cid: video.cid,
         serviceProdiver: PROVIDERS.STORACHA,
+        title: video.name,
         createdAt: new Date().toISOString(),
       },
     })

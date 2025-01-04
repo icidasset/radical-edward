@@ -1,4 +1,5 @@
 import { Agent } from '@atproto/api'
+import type { Record } from '@atproto/api/src/client/types/com/atproto/repo/listRecords'
 import { signal } from 'spellcaster'
 
 import type { Video } from './videos'
@@ -26,6 +27,24 @@ export const [atAgent, setATAgent] = signal(
     .then((session) => (session === undefined ? undefined : new Agent(session)))
 )
 
+export const [atProfile, setATProfile] = signal(
+  await (async () => {
+    const agent = atAgent()
+    if (agent === undefined) return
+
+    return await agent.getProfile({ actor: agent.assertDid })
+  })()
+)
+
+export const [atSubs, setATSubs] = signal(
+  await (async () => {
+    const agent = atAgent()
+    if (agent === undefined) return
+
+    return await allSubscriptions(agent)
+  })()
+)
+
 // MORE SIGNALS
 
 export { page, setPage } from './routing'
@@ -46,4 +65,40 @@ export function isConnectedToATProto(): boolean {
  */
 export function isConnectedToStoracha(): boolean {
   return w3client().currentSpace() !== undefined
+}
+
+// 📰
+
+/**
+ *
+ * @param agent
+ */
+async function allSubscriptions(agent: Agent) {
+  const getRecords = async (cursor?: string): Promise<Record[]> => {
+    const resp = await agent.com.atproto.repo.listRecords({
+      repo: agent.assertDid,
+      collection: 'ma.tokono.byov.subscription',
+      cursor,
+      limit: 100,
+    })
+
+    if (resp.data.cursor === undefined) return resp.data.records
+
+    return await getRecords(resp.data.cursor).then((records: Record[]) => [
+      ...resp.data.records,
+      ...records,
+    ])
+  }
+
+  return await getRecords()
+}
+
+/**
+ *
+ */
+export async function syncATSubs() {
+  const agent = atAgent()
+  if (agent === undefined) return
+
+  setATSubs(await allSubscriptions(agent))
 }

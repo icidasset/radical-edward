@@ -7,8 +7,14 @@ export interface AllVideos {
   url: '/'
 }
 
-export interface MyChannel {
-  id: 'my-channel'
+export interface Channel {
+  id: 'channel'
+  profileDID: string
+  url: string
+}
+
+export interface MyVideos {
+  id: 'my-videos'
   url: '/me'
 }
 
@@ -24,8 +30,15 @@ export interface Video {
 }
 
 const PAGES_ALL_VIDEOS: AllVideos = { id: 'all-videos', url: '/' }
-const PAGES_MY_CHANNEL: MyChannel = { id: 'my-channel', url: '/me' }
+const PAGES_MY_VIDEOS: MyVideos = { id: 'my-videos', url: '/me' }
 const PAGES_UPLOAD_VIDEO: UploadVideo = { id: 'upload-video', url: '/upload' }
+
+const PAGES_CHANNEL: (did: string) => Channel = (did: string) => ({
+  id: 'channel',
+  profileDID: did,
+  url: `/channel/${did}`,
+})
+
 const PAGES_VIDEO: (cid: string) => Video = (cid: string) => ({
   id: 'video',
   videoCID: cid,
@@ -34,7 +47,8 @@ const PAGES_VIDEO: (cid: string) => Video = (cid: string) => ({
 
 export const Pages = {
   AllVideos: PAGES_ALL_VIDEOS,
-  MyChannel: PAGES_MY_CHANNEL,
+  Channel: PAGES_CHANNEL,
+  MyVideos: PAGES_MY_VIDEOS,
   UploadVideo: PAGES_UPLOAD_VIDEO,
   Video: PAGES_VIDEO,
 }
@@ -79,8 +93,11 @@ export function pageFromPath(path: string) {
     case '': {
       return Pages.AllVideos
     }
+    case 'channel': {
+      return Pages.Channel(parts[1])
+    }
     case 'me': {
-      return Pages.MyChannel
+      return Pages.MyVideos
     }
     case 'video': {
       return Pages.Video(parts[1])

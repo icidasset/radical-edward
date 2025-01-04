@@ -14,7 +14,15 @@ export function Video(cid: string) {
       return [
         tags.h2({}, text('Video')),
         tags.div({}, [
-          tags.video({ controls: true, preload: 'auto', src: url }, []),
+          tags.video(
+            {
+              className: 'max-w-full',
+              controls: true,
+              preload: 'auto',
+              src: url,
+            },
+            []
+          ),
         ]),
       ]
     })
