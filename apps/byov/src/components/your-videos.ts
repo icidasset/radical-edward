@@ -19,6 +19,7 @@ import {
   videos,
 } from '../signals'
 import { PROVIDERS } from '../providers'
+import { Pages } from '../routing'
 
 /**
  *
@@ -155,9 +156,10 @@ function renderVideo(video: Video) {
         )
       : tags.span({}, []),
 
-    // video.public && video.cid !== undefined
-    //   ? tags.a({ href: Pages.Video(video.cid).url }, text('🍿 WATCH'))
-    //   : tags.span({}, []),
+    tags.span({}, text(video.public ? ' / ' : '')),
+    video.public && video.cid !== undefined
+      ? tags.a({ href: Pages.Video(video.cid).url }, text('🍿 WATCH'))
+      : tags.span({}, []),
   ])
 }
 
@@ -168,7 +170,7 @@ function renderVideo(video: Video) {
 function publish(video: PublicVideo) {
   return async () => {
     const agent = atAgent()
-    if (agent === undefined) return
+    if (agent.did === undefined) return
 
     const did = agent.assertDid
 
@@ -196,7 +198,7 @@ function publish(video: PublicVideo) {
 function unpublish(video: PublicVideo) {
   return async () => {
     const agent = atAgent()
-    if (agent === undefined) return
+    if (agent.did === undefined) return
 
     const did = agent.assertDid
     const promises = video.published.map(async (rec) => {

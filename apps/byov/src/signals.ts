@@ -24,13 +24,16 @@ export const [atAgent, setATAgent] = signal(
   await ATProto.client
     .init()
     .then((r) => r?.session)
-    .then((session) => (session === undefined ? undefined : new Agent(session)))
+    .then(
+      (session) =>
+        new Agent(session ?? 'https://lionsmane.us-east.host.bsky.network')
+    )
 )
 
 export const [atProfile, setATProfile] = signal(
   await (async () => {
     const agent = atAgent()
-    if (agent === undefined) return
+    if (agent.did === undefined) return
 
     return await agent.getProfile({ actor: agent.assertDid })
   })()
@@ -39,7 +42,7 @@ export const [atProfile, setATProfile] = signal(
 export const [atSubs, setATSubs] = signal(
   await (async () => {
     const agent = atAgent()
-    if (agent === undefined) return
+    if (agent.did === undefined) return
 
     return await allSubscriptions(agent)
   })()
@@ -57,7 +60,7 @@ export const [videos, setVideos] = signal<'loading' | Video[]>([])
  *
  */
 export function isConnectedToATProto(): boolean {
-  return atAgent() !== undefined
+  return atAgent().did !== undefined
 }
 
 /**
@@ -98,7 +101,7 @@ async function allSubscriptions(agent: Agent) {
  */
 export async function syncATSubs() {
   const agent = atAgent()
-  if (agent === undefined) return
+  if (agent.did === undefined) return
 
   setATSubs(await allSubscriptions(agent))
 }

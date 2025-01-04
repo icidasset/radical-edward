@@ -1,6 +1,5 @@
 import { type Agent, AtUri } from '@atproto/api'
 import type { Record } from '@atproto/api/src/client/types/com/atproto/repo/listRecords'
-import type { ProfileViewDetailed } from '@atproto/api/dist/client/types/app/bsky/actor/defs'
 import { effect, signal } from 'spellcaster'
 import { tags, text } from 'spellcaster/hyperscript.js'
 
@@ -12,21 +11,12 @@ import { atAgent, atSubs, syncATSubs } from '../signals'
  * @param did
  */
 export function Channel(did: string) {
-  const [profile, setProfile] = signal<ProfileViewDetailed | 'loading'>(
-    'loading'
-  )
-  const [videos, setVideos] = signal<Record[]>([])
+  const [videos, setVideos] = signal<Record[] | 'loading'>('loading')
 
   effect(async () => {
     const agent = atAgent()
-    if (agent === undefined) return
-
     const vids = await allVideos(agent, did)
-    const pro = await agent.getProfile({
-      actor: did,
-    })
 
-    setProfile(pro.data)
     setVideos(vids)
   })
 
@@ -35,18 +25,19 @@ export function Channel(did: string) {
     tags.div(
       {},
       reactiveElement(() => {
-        const p = profile()
-        if (p === 'loading') return tags.span({}, text('Loading profile ...'))
+        const vids = videos()
+        if (vids === 'loading') return tags.span({}, text('Loading videos ...'))
 
         return tags.div({}, [
           tags.p({}, [
-            tags.strong({}, text(p.handle)),
-            tags.br(),
-            tags.span({}, text(p.displayName)),
+            tags.strong({}, text(did)),
             tags.br(),
             tags.div(
               {},
               reactiveElement(() => {
+                const agent = atAgent()
+                if (agent.did === undefined) return tags.span({}, [])
+
                 const subs = atSubs()
                 const matchingSubs = (subs ?? []).filter(
                   (s) => (s.value as any).subject === p.did
@@ -71,7 +62,7 @@ export function Channel(did: string) {
           ]),
           tags.div(
             { className: 'gap-4 grid grid-cols-3 mt-5' },
-            videos().map((video) => {
+            vids.map((video) => {
               return tags.a(
                 {
                   className: 'block',
@@ -133,7 +124,7 @@ async function allVideos(agent: Agent, did: string) {
 function subscribe(profileDID: string) {
   return async () => {
     const agent = atAgent()
-    if (agent === undefined) return
+    if (agent.did === undefined) return
 
     await agent.com.atproto.repo.createRecord({
       repo: agent.assertDid,
@@ -156,7 +147,7 @@ function subscribe(profileDID: string) {
 function unsubscribe(uriString: string) {
   return async () => {
     const agent = atAgent()
-    if (agent === undefined) return
+    if (agent.did === undefined) return
 
     const uri = new AtUri(uriString)
 
