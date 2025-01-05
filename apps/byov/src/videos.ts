@@ -59,11 +59,14 @@ export async function listVideos(): Promise<Video[]> {
     publ.map(async (v): Promise<PublicVideo | undefined> => {
       const name = (await fs.exists([...PUBLIC_VIDEO_PATH, v.name, 'name.txt']))
         ? await fs.read([...PUBLIC_VIDEO_PATH, v.name, 'name.txt'], 'utf8')
-        : await fs
-            .ls([...PUBLIC_VIDEO_PATH, v.name])
-            .then((a) => a[0]?.name ?? '')
+        : undefined
 
-      const ext = name.match(/\.([^$]+)/)?.[1]
+      const ext = (
+        name ??
+        (await fs.ls([...PUBLIC_VIDEO_PATH, v.name]).then((a) => a[0]?.name)) ??
+        ''
+      ).match(/\.([^$]+)/)?.[1]
+
       const cid = await fs
         .contentCID([
           ...PUBLIC_VIDEO_PATH,
@@ -79,7 +82,7 @@ export async function listVideos(): Promise<Video[]> {
       return {
         id: v.name,
         cid,
-        name,
+        name: name ?? '',
         public: true,
         published: pblsh,
         url: `https://w3s.link/ipfs/${cid}`,
@@ -88,15 +91,15 @@ export async function listVideos(): Promise<Video[]> {
   )
 
   const privWithNames = await Promise.all(
-    priv.map(
-      async (v): Promise<PrivateVideo> => ({
+    priv.map(async (v): Promise<PrivateVideo> => {
+      return {
         id: v.name,
         public: false,
         name: (await fs.exists([...PRIVATE_VIDEO_PATH, v.name, 'name.txt']))
           ? await fs.read([...PRIVATE_VIDEO_PATH, v.name, 'name.txt'], 'utf8')
           : '',
-      })
-    )
+      }
+    })
   )
 
   const videos = [

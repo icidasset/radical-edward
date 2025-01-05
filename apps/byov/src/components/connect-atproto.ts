@@ -10,7 +10,7 @@ import { isConnectedToATProto } from '../signals'
 export function ConnectAtProto() {
   return tags.div(
     {
-      className: 'border-b border-stone-800 mb-12 pb-12 text-center',
+      className: 'border-b border-stone-800 mb-12 pb-12',
     },
     reactiveElement(() => {
       return tags.button(

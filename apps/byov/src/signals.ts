@@ -2,7 +2,7 @@ import { Agent } from '@atproto/api'
 import type { Record } from '@atproto/api/src/client/types/com/atproto/repo/listRecords'
 import { signal } from 'spellcaster'
 
-import type { Video } from './videos'
+import { type Video, listVideos } from './videos'
 import { setup } from './setup'
 import * as ATProto from './atproto'
 
@@ -52,7 +52,9 @@ export const [atSubs, setATSubs] = signal(
 
 export { page, setPage } from './routing'
 export const [isUploading, setIsUploading] = signal(false)
-export const [videos, setVideos] = signal<'loading' | Video[]>([])
+export const [videos, setVideos] = signal<'loading' | Video[]>(
+  await listVideos()
+)
 
 // DERIVATIVES
 

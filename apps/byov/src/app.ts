@@ -79,8 +79,12 @@ function AllVideos() {
  */
 function MyVideos() {
   return tags.div({}, [
-    ConnectStoracha(),
-    ConnectAtProto(),
+    tags.div(
+      {
+        className: 'text-center',
+      },
+      [ConnectStoracha(), ConnectAtProto()]
+    ),
     YourVideos(),
     UploadVideo(),
   ])

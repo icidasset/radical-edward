@@ -1,23 +1,29 @@
-import { type Agent, AtUri } from '@atproto/api'
 import type { Record } from '@atproto/api/src/client/types/com/atproto/repo/listRecords'
+import { type Agent, AtUri } from '@atproto/api'
 import { effect, signal } from 'spellcaster'
 import { tags, text } from 'spellcaster/hyperscript.js'
 
 import { reactiveElement } from '../common'
 import { atAgent, atSubs, syncATSubs } from '../signals'
+import { Grid, type GridVideo } from './grid'
 
 /**
  *
  * @param did
  */
 export function Channel(did: string) {
-  const [videos, setVideos] = signal<Record[] | 'loading'>('loading')
+  const [videos, setVideos] = signal<GridVideo[] | 'loading'>('loading')
 
   effect(async () => {
     const agent = atAgent()
     const vids = await allVideos(agent, did)
 
-    setVideos(vids)
+    setVideos(
+      vids.map((v) => {
+        const { cid, title } = v.value as any
+        return { cid, title }
+      })
+    )
   })
 
   return tags.div({}, [
@@ -40,7 +46,7 @@ export function Channel(did: string) {
 
                 const subs = atSubs()
                 const matchingSubs = (subs ?? []).filter(
-                  (s) => (s.value as any).subject === p.did
+                  (s) => (s.value as any).subject === did
                 )
 
                 if (matchingSubs.length > 0)
@@ -60,32 +66,7 @@ export function Channel(did: string) {
               })
             ),
           ]),
-          tags.div(
-            { className: 'gap-4 grid grid-cols-3 mt-5' },
-            vids.map((video) => {
-              return tags.a(
-                {
-                  className: 'block',
-                  href: `/video/${(video.value as any).cid}`,
-                },
-                [
-                  tags.div(
-                    {
-                      className:
-                        'aspect-video bg-stone-700 flex items-center justify-center rounded',
-                    },
-                    [tags.span({}, text('🎞️'))]
-                  ),
-                  tags.div(
-                    {
-                      className: 'break-all leading-tight mt-2 text-xs',
-                    },
-                    text((video.value as any).title)
-                  ),
-                ]
-              )
-            })
-          ),
+          Grid(vids),
         ])
       })
     ),

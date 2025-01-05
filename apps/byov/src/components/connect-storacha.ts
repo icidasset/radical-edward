@@ -20,7 +20,7 @@ import { reactiveElement } from '../common'
 export function ConnectStoracha() {
   return tags.div(
     {
-      className: 'mb-6 text-center',
+      className: 'mb-6',
     },
     reactiveElement(() => {
       return tags.button(
@@ -57,6 +57,8 @@ async function connect(event: Event) {
   const encryptionKey = await Crypto.buildEncryptionKey(passkey.results.second)
   const did = DIDKey.fromPublicKey('Ed25519', signingKey.public)
 
+  console.log('did', did.toString())
+
   const email = prompt("What's your email address? (Storacha account)")
   if (email === null) return
 
@@ -76,6 +78,9 @@ async function connect(event: Event) {
   const spaceName = `BYOV/${did.toString()}`
   const existingSpace = spaces.find((space) => space.name === spaceName)
 
+  console.log(existingSpace)
+  console.log(spaces)
+
   let fs = fileSystem()
 
   if (existingSpace === undefined) {
@@ -92,8 +97,10 @@ async function connect(event: Event) {
 
     fs = await FS.load({ blockstore: blockstore(), client })
 
-    if (await fs.exists(['public', '.passkey'])) {
-      const encryptedCapsuleKey = await fs.read(['public', '.passkey'], 'bytes')
+    console.log(await fs.ls(['public']))
+
+    if (await fs.exists(['public', 'passkey'])) {
+      const encryptedCapsuleKey = await fs.read(['public', 'passkey'], 'bytes')
       const capsuleKey = await Crypto.decrypt(
         encryptedCapsuleKey,
         encryptionKey
@@ -108,7 +115,7 @@ async function connect(event: Event) {
   if (capsuleKey === undefined) return
 
   const encryptedRootKey = await Crypto.encrypt(capsuleKey, encryptionKey)
-  await fs.write(['public', '.passkey'], 'bytes', encryptedRootKey)
+  await fs.write(['public', 'passkey'], 'bytes', encryptedRootKey)
 
   target.textContent = '☑️ Connected to Storacha'
 }

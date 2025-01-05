@@ -41,6 +41,8 @@ export async function setup(): Promise<Context> {
   const fs = await FS.load({ blockstore, client })
   await FS.loadPrivate({ blockstore, fs })
 
+  console.log(await fs.ls(['public']))
+
   // FS.EVENTS.PUBLISH – When the file system mutations settle,
   //                     store the file system blocks remotely.
   fs.on('publish', async (event) => {

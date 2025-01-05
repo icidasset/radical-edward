@@ -22,6 +22,7 @@ export function UploadVideo() {
           accept: 'video/*',
           className: 'inline-block mt-2',
           type: 'file',
+          multiple: true,
           onchange: inputHandler,
         },
         text('browse for your videos')

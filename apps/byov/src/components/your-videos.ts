@@ -25,20 +25,8 @@ import { Pages } from '../routing'
  *
  */
 export function YourVideos() {
-  let timeoutId: undefined | ReturnType<typeof setTimeout>
-
-  effect(() => {
-    timeoutId = setTimeout(() => {
-      setVideos('loading')
-    }, 250)
-  })
-
   // Load video list & update it when the source changes
   effect(async () => {
-    const list = await listVideos()
-    clearTimeout(timeoutId)
-    setVideos(list)
-
     const fs = fileSystem()
 
     fs.off('commit', onCommit)
@@ -144,7 +132,7 @@ function renderVideo(video: Video) {
       },
       text(video.public ? '🔐 MAKE PRIVATE' : '🌍 MAKE PUBLIC')
     ),
-    tags.span({}, text(video.public ? ' / ' : '')),
+    tags.span({}, text(isConnectedToStoracha() && video.public ? ' / ' : '')),
     isConnectedToStoracha() && video.public && video.cid !== undefined
       ? tags.a(
           {
@@ -156,8 +144,8 @@ function renderVideo(video: Video) {
         )
       : tags.span({}, []),
 
-    tags.span({}, text(video.public ? ' / ' : '')),
-    video.public && video.cid !== undefined
+    tags.span({}, text(isConnectedToStoracha() && video.public ? ' / ' : '')),
+    isConnectedToStoracha() && video.public && video.cid !== undefined
       ? tags.a({ href: Pages.Video(video.cid).url }, text('🍿 WATCH'))
       : tags.span({}, []),
   ])
@@ -182,7 +170,7 @@ function publish(video: PublicVideo) {
         id: video.id,
         cid: video.cid,
         serviceProdiver: PROVIDERS.STORACHA,
-        title: video.name,
+        title: prompt('Video title:', video.name),
         createdAt: new Date().toISOString(),
       },
     })
