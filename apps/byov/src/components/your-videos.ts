@@ -14,6 +14,7 @@ import { reactiveElement } from '../common'
 import {
   atAgent,
   fileSystem,
+  isConnectedToATProto,
   isConnectedToStoracha,
   setVideos,
   videos,
@@ -132,8 +133,18 @@ function renderVideo(video: Video) {
       },
       text(video.public ? '🔐 MAKE PRIVATE' : '🌍 MAKE PUBLIC')
     ),
-    tags.span({}, text(isConnectedToStoracha() && video.public ? ' / ' : '')),
-    isConnectedToStoracha() && video.public && video.cid !== undefined
+    tags.span(
+      {},
+      text(
+        isConnectedToStoracha() && isConnectedToATProto() && video.public
+          ? ' / '
+          : ''
+      )
+    ),
+    isConnectedToStoracha() &&
+    isConnectedToATProto() &&
+    video.public &&
+    video.cid !== undefined
       ? tags.a(
           {
             className: 'cursor-pointer',

@@ -9,7 +9,9 @@ import * as Passkey from '../passkey'
 import {
   blockstore,
   fileSystem,
+  fileSystemSetup,
   isConnectedToStoracha,
+  setFileSystem,
   w3client,
 } from '../signals'
 import { reactiveElement } from '../common'
@@ -35,6 +37,8 @@ export function ConnectStoracha() {
   )
 }
 
+export const PASSKEY_PATH: ['public', string] = ['public', '.passkey']
+
 /**
  *
  * @param event
@@ -57,8 +61,6 @@ async function connect(event: Event) {
   const encryptionKey = await Crypto.buildEncryptionKey(passkey.results.second)
   const did = DIDKey.fromPublicKey('Ed25519', signingKey.public)
 
-  console.log('did', did.toString())
-
   const email = prompt("What's your email address? (Storacha account)")
   if (email === null) return
 
@@ -78,13 +80,15 @@ async function connect(event: Event) {
   const spaceName = `BYOV/${did.toString()}`
   const existingSpace = spaces.find((space) => space.name === spaceName)
 
-  console.log(existingSpace)
-  console.log(spaces)
-
   let fs = fileSystem()
 
   if (existingSpace === undefined) {
-    const ownedSpace = await client.createSpace(spaceName, { account })
+    // TODO: skipGatewayAuthorization = false (currently set to true bc. gateway defined is down)
+    const ownedSpace = await client.createSpace(spaceName, {
+      account,
+      skipGatewayAuthorization: true,
+    })
+
     await ownedSpace.save()
     await client.setCurrentSpace(ownedSpace.did())
 
@@ -97,10 +101,8 @@ async function connect(event: Event) {
 
     fs = await FS.load({ blockstore: blockstore(), client })
 
-    console.log(await fs.ls(['public']))
-
-    if (await fs.exists(['public', 'passkey'])) {
-      const encryptedCapsuleKey = await fs.read(['public', 'passkey'], 'bytes')
+    if (await fs.exists(PASSKEY_PATH)) {
+      const encryptedCapsuleKey = await fs.read(PASSKEY_PATH, 'bytes')
       const capsuleKey = await Crypto.decrypt(
         encryptedCapsuleKey,
         encryptionKey
@@ -109,13 +111,16 @@ async function connect(event: Event) {
       await FS.Keys.save({ key: capsuleKey, path: Path.root() })
       await FS.loadPrivate({ blockstore: blockstore(), fs })
     }
+
+    setFileSystem(fs)
+    await fileSystemSetup()
   }
 
   const capsuleKey = await FS.Keys.lookup({ path: Path.root() })
   if (capsuleKey === undefined) return
 
   const encryptedRootKey = await Crypto.encrypt(capsuleKey, encryptionKey)
-  await fs.write(['public', 'passkey'], 'bytes', encryptedRootKey)
+  await fs.write(PASSKEY_PATH, 'bytes', encryptedRootKey)
 
   target.textContent = '☑️ Connected to Storacha'
 }
