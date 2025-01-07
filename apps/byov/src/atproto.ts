@@ -3,7 +3,7 @@ import {
   BrowserOAuthClient,
 } from '@atproto/oauth-client-browser'
 
-export const CLIENT_URI = 'https://incredibly-sharp-woodcock.ngrok-free.app'
+export const CLIENT_URI = 'https://byov.tokono.ma'
 
 export const client = new BrowserOAuthClient({
   clientMetadata: {
