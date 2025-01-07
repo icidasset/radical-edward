@@ -1,0 +1,15 @@
+{
+  "client_id": "https://byov.tokono.ma/client-metadata.json",
+  "client_name": "Bring Your Own Video",
+  "client_uri": "https://byov.tokono.ma",
+  "logo_uri": "https://byov.tokono.ma/logo.png",
+  "tos_uri": "https://byov.tokono.ma/tos",
+  "policy_uri": "https://byov.tokono.ma/policy",
+  "redirect_uris": ["https://byov.tokono.ma"],
+  "scope": "atproto transition:generic",
+  "grant_types": ["authorization_code", "refresh_token"],
+  "response_types": ["code"],
+  "token_endpoint_auth_method": "none",
+  "application_type": "web",
+  "dpop_bound_access_tokens": true
+}

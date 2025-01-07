@@ -1,5 +1,5 @@
 {
-  "name": "demo",
+  "name": "@examples/w3name-passkey",
   "type": "module",
   "version": "1.0.0",
   "private": true,

@@ -1,0 +1,23 @@
+{
+  "lexicon": 1,
+  "id": "ma.tokono.byov.subscription",
+  "defs": {
+    "main": {
+      "type": "record",
+      "description": "A channel subscription.",
+      "key": "any",
+      "record": {
+        "type": "object",
+        "required": ["createdAt", "subject"],
+        "properties": {
+          "createdAt": {
+            "type": "datetime"
+          },
+          "subject": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}
