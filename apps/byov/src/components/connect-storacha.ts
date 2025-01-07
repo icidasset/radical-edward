@@ -1,4 +1,3 @@
-// import type * as W3_UP from '@web3-storage/w3up-client'
 import { Path } from '@wnfs-wg/nest'
 import { tags, text } from 'spellcaster/hyperscript.js'
 import { DIDKey } from 'iso-did/key'
@@ -83,7 +82,7 @@ async function connect(event: Event) {
   let fs = fileSystem()
 
   if (existingSpace === undefined) {
-    // TODO: skipGatewayAuthorization = false (currently set to true bc. gateway defined is down)
+    // NOTE: skipGatewayAuthorization = false (currently set to true bc. gateway defined is down)
     const ownedSpace = await client.createSpace(spaceName, {
       account,
       skipGatewayAuthorization: true,

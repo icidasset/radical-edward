@@ -3,6 +3,13 @@ import {
   BrowserOAuthClient,
 } from '@atproto/oauth-client-browser'
 
+export interface ListRecord {
+  uri: string
+  cid: string
+  value: Record<string, unknown>
+  [k: string]: unknown
+}
+
 export const CLIENT_URI = 'https://byov.tokono.ma'
 
 export const client = new BrowserOAuthClient({

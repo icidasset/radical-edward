@@ -13,13 +13,6 @@ import { ConnectAtProto } from './components/connect-atproto'
 import { Video } from './components/video'
 import { Channel } from './components/channel'
 
-// TODO:
-// * Upload video to private folder
-// * List all private & public videos in one list
-// * Add ability to make a video public or private
-// * Stream a video (private or public)
-// * Use ed25519 public key from passkey as FS identifier
-
 // 🏡
 
 /**

@@ -1,8 +1,8 @@
-import type { Record } from '@atproto/api/src/client/types/com/atproto/repo/listRecords'
 import { type Agent, AtUri } from '@atproto/api'
 import { effect, signal } from 'spellcaster'
 import { tags, text } from 'spellcaster/hyperscript.js'
 
+import type { ListRecord } from '../atproto'
 import { reactiveElement } from '../common'
 import { atAgent, atSubs, syncATSubs } from '../signals'
 import { Grid, type GridVideo } from './grid'
@@ -79,7 +79,7 @@ export function Channel(did: string) {
  * @param did
  */
 async function allVideos(agent: Agent, did: string) {
-  const getRecords = async (cursor?: string): Promise<Record[]> => {
+  const getRecords = async (cursor?: string): Promise<ListRecord[]> => {
     const resp = await agent.com.atproto.repo.listRecords({
       repo: did,
       collection: 'ma.tokono.byov.video',
@@ -89,7 +89,7 @@ async function allVideos(agent: Agent, did: string) {
 
     if (resp.data.cursor === undefined) return resp.data.records
 
-    return await getRecords(resp.data.cursor).then((records: Record[]) => [
+    return await getRecords(resp.data.cursor).then((records: ListRecord[]) => [
       ...resp.data.records,
       ...records,
     ])

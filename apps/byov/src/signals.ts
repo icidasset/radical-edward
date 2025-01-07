@@ -1,5 +1,4 @@
 import { Agent } from '@atproto/api'
-import type { Record } from '@atproto/api/src/client/types/com/atproto/repo/listRecords'
 import { effect, signal } from 'spellcaster'
 
 import { type Video, listVideos } from './videos'
@@ -111,7 +110,7 @@ export function isConnectedToStoracha(): boolean {
  * @param agent
  */
 async function allSubscriptions(agent: Agent) {
-  const getRecords = async (cursor?: string): Promise<Record[]> => {
+  const getRecords = async (cursor?: string): Promise<ATProto.ListRecord[]> => {
     const resp = await agent.com.atproto.repo.listRecords({
       repo: agent.assertDid,
       collection: 'ma.tokono.byov.subscription',
@@ -121,10 +120,9 @@ async function allSubscriptions(agent: Agent) {
 
     if (resp.data.cursor === undefined) return resp.data.records
 
-    return await getRecords(resp.data.cursor).then((records: Record[]) => [
-      ...resp.data.records,
-      ...records,
-    ])
+    return await getRecords(resp.data.cursor).then(
+      (records: ATProto.ListRecord[]) => [...resp.data.records, ...records]
+    )
   }
 
   return await getRecords()

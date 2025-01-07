@@ -1,9 +1,7 @@
 import type { Agent } from '@atproto/api'
-import type {
-  Record,
-  Response,
-} from '@atproto/api/src/client/types/com/atproto/repo/listRecords'
 import type { Path } from '@wnfs-wg/nest'
+
+import type { ListRecord } from './atproto'
 import { atAgent, fileSystem } from './signals'
 
 export const PUBLIC_VIDEO_PATH: Path.PartitionedNonEmpty<Path.Public> = [
@@ -21,7 +19,7 @@ export interface PublicVideo {
   cid: string
   name: string
   public: true
-  published: Record[]
+  published: ListRecord[]
   url: string
 }
 
@@ -41,7 +39,7 @@ export async function listVideos(): Promise<Video[]> {
 
   // ATProto
   const agent = atAgent()
-  let published: Record[] = []
+  let published: ListRecord[] = []
 
   if (agent.did !== undefined) {
     published = await listPublished(agent)
@@ -114,7 +112,10 @@ export async function listVideos(): Promise<Video[]> {
  * @param agent
  * @param cursor
  */
-async function listPublished(agent: Agent, cursor?: string): Promise<Record[]> {
+async function listPublished(
+  agent: Agent,
+  cursor?: string
+): Promise<ListRecord[]> {
   return await agent.com.atproto.repo
     .listRecords({
       repo: agent.assertDid,
@@ -122,11 +123,11 @@ async function listPublished(agent: Agent, cursor?: string): Promise<Record[]> {
       cursor,
       limit: 100,
     })
-    .then(async (resp: Response) => {
+    .then(async (resp) => {
       if (resp.data.cursor === undefined) return resp.data.records
 
       return await listPublished(agent, resp.data.cursor).then(
-        (records: Record[]) => [...resp.data.records, ...records]
+        (records: ListRecord[]) => [...resp.data.records, ...records]
       )
     })
 }

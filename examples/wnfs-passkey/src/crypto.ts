@@ -68,7 +68,7 @@ export async function encrypt(
   const encrypted = await webcrypto.subtle.encrypt(
     { name: 'AES-GCM', iv },
     encryptionKey,
-    data.buffer
+    data
   )
 
   return concat([iv, u8(encrypted)])

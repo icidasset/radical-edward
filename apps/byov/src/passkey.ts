@@ -48,8 +48,8 @@ export async function create({
       extensions: {
         prf: {
           eval: {
-            first: utf8.decode(rp.id + 'signing').buffer,
-            second: utf8.decode(rp.id + 'encryption').buffer,
+            first: utf8.decode(rp.id + 'signing'),
+            second: utf8.decode(rp.id + 'encryption'),
           },
         },
       },
@@ -101,8 +101,8 @@ export async function get({
       extensions: {
         prf: {
           eval: {
-            first: utf8.decode(rp.id + 'signing').buffer,
-            second: utf8.decode(rp.id + 'encryption').buffer,
+            first: utf8.decode(rp.id + 'signing'),
+            second: utf8.decode(rp.id + 'encryption'),
           },
         },
       },
