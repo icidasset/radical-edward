@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.0](https://github.com/icidasset/radical-edward/compare/w3-wnfs-v0.1.1...w3-wnfs-v0.2.0) (2025-01-07)
+
+
+### Miscellaneous Chores
+
+* **w3-wnfs:** Update dependencies ([7830ad3](https://github.com/icidasset/radical-edward/commit/7830ad3f5c6dc9e2f42aec238a0a6210023d8030))
+
 ## [0.1.1](https://github.com/icidasset/radical-edward/compare/w3-wnfs-v0.1.0...w3-wnfs-v0.1.1) (2024-03-27)
 
 
