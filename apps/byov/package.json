@@ -15,8 +15,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@atproto/api": "^0.13.25",
-    "@atproto/oauth-client-browser": "^0.3.5",
+    "@atproto/api": "^0.13.26",
+    "@atproto/oauth-client-browser": "^0.3.6",
     "@noble/curves": "^1.8.0",
     "@ucanto/core": "^10.0.1",
     "@virtualstate/navigation": "1.0.1-alpha.206",

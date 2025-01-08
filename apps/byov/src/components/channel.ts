@@ -1,10 +1,11 @@
-import { type Agent, AtUri } from '@atproto/api'
+import { Agent, AtUri } from '@atproto/api'
+import { DidResolverCommon } from '@atproto/oauth-client-browser'
 import { effect, signal } from 'spellcaster'
 import { tags, text } from 'spellcaster/hyperscript.js'
 
 import type { ListRecord } from '../atproto'
 import { reactiveElement } from '../common'
-import { atAgent, atSubs, syncATSubs } from '../signals'
+import { atAgent, atSubs, isConnectedToATProto, syncATSubs } from '../signals'
 import { Grid, type GridVideo } from './grid'
 
 /**
@@ -12,10 +13,35 @@ import { Grid, type GridVideo } from './grid'
  * @param did
  */
 export function Channel(did: string) {
-  const [videos, setVideos] = signal<GridVideo[] | 'loading'>('loading')
+  const [videos, setVideos] = signal<GridVideo[] | 'loading' | string>(
+    'loading'
+  )
 
   effect(async () => {
-    const agent = atAgent()
+    const didres = new DidResolverCommon({})
+    let endpoint: string
+
+    try {
+      const doc = await didres.resolve(did as `did:${string}:${string}`)
+      const end = doc?.service?.[0]?.serviceEndpoint
+
+      if (end === undefined) {
+        setVideos('Service endpoint is missing from DID document')
+        return
+      }
+
+      if (typeof end !== 'string') {
+        setVideos('Service endpoint is not a string')
+        return
+      }
+
+      endpoint = end
+    } catch (error) {
+      setVideos((error as Error).message)
+      return
+    }
+
+    const agent = new Agent(endpoint)
     const vids = await allVideos(agent, did)
 
     setVideos(
@@ -32,7 +58,13 @@ export function Channel(did: string) {
       {},
       reactiveElement(() => {
         const vids = videos()
-        if (vids === 'loading') return tags.span({}, text('Loading videos ...'))
+        if (vids === 'loading')
+          return tags.span({ className: 'text-sm' }, text('LOADING VIDEOS ...'))
+        if (typeof vids === 'string')
+          return tags.span(
+            { className: 'text-sm' },
+            text('FAILED TO LOAD CHANNEL 🧨: ' + vids)
+          )
 
         return tags.div({}, [
           tags.p({}, [
@@ -41,8 +73,7 @@ export function Channel(did: string) {
             tags.div(
               {},
               reactiveElement(() => {
-                const agent = atAgent()
-                if (agent.did === undefined) return tags.span({}, [])
+                if (!isConnectedToATProto()) return tags.span({}, [])
 
                 const subs = atSubs()
                 const matchingSubs = (subs ?? []).filter(
@@ -105,7 +136,7 @@ async function allVideos(agent: Agent, did: string) {
 function subscribe(profileDID: string) {
   return async () => {
     const agent = atAgent()
-    if (agent.did === undefined) return
+    if (agent?.did === undefined) return
 
     await agent.com.atproto.repo.createRecord({
       repo: agent.assertDid,
@@ -128,7 +159,7 @@ function subscribe(profileDID: string) {
 function unsubscribe(uriString: string) {
   return async () => {
     const agent = atAgent()
-    if (agent.did === undefined) return
+    if (agent?.did === undefined) return
 
     const uri = new AtUri(uriString)
 

@@ -41,7 +41,7 @@ export async function listVideos(): Promise<Video[]> {
   const agent = atAgent()
   let published: ListRecord[] = []
 
-  if (agent.did !== undefined) {
+  if (agent?.did !== undefined) {
     published = await listPublished(agent)
   }
 

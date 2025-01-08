@@ -169,7 +169,7 @@ function renderVideo(video: Video) {
 function publish(video: PublicVideo) {
   return async () => {
     const agent = atAgent()
-    if (agent.did === undefined) return
+    if (agent?.did === undefined) return
 
     const did = agent.assertDid
 
@@ -197,7 +197,7 @@ function publish(video: PublicVideo) {
 function unpublish(video: PublicVideo) {
   return async () => {
     const agent = atAgent()
-    if (agent.did === undefined) return
+    if (agent?.did === undefined) return
 
     const did = agent.assertDid
     const promises = video.published.map(async (rec) => {

@@ -17,7 +17,7 @@ export function YourSubscriptions() {
   effect(async () => {
     const subs = atSubs()
     const agent = atAgent()
-    if (subs === undefined) return
+    if (subs === undefined || agent === undefined) return
 
     const dids = subs.map((s) => (s.value as any).subject as string)
     const records = await Promise.all(
