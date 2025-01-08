@@ -82,7 +82,14 @@ async function uploadFiles(files: File[]) {
     setIsUploading(true)
   }, 500)
 
-  const promises = files.map(async (file: File) => {
+  /**
+   *
+   * @param remaining
+   */
+  async function process(remaining: File[]) {
+    const file = remaining[0]
+    if (file === undefined) return
+
     const uuid = crypto.randomUUID()
     const bytes = new Uint8Array(await file.arrayBuffer())
     const ext = file.name.match(/\.([^$]+)/)?.[1]
@@ -98,9 +105,10 @@ async function uploadFiles(files: File[]) {
     )
 
     await fs.write(['private', 'Videos', uuid, 'name.txt'], 'utf8', file.name)
-  })
+    await process(remaining.slice(1))
+  }
 
-  await Promise.all(promises)
+  await process(files)
 
   clearTimeout(timeoutId)
   setIsUploading(false)
