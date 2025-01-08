@@ -104,7 +104,12 @@ export async function listVideos(): Promise<Video[]> {
     ...publWithNames.filter((a): a is PublicVideo => a !== undefined),
     ...privWithNames,
   ]
-  return videos
+
+  return videos.sort((a: Video, b: Video) => {
+    if (a.name < b.name) return -1
+    if (a.name > b.name) return 1
+    return 0
+  })
 }
 
 /**
