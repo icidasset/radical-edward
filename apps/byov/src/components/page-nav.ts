@@ -44,7 +44,7 @@ function NavItem(
   { href, isActive }: { href: string; isActive: boolean }
 ) {
   const className = isActive
-    ? 'text-flaming-june border-b-2 border-current'
+    ? 'text-fairy-tale border-b-2 border-current'
     : 'cursor-pointer'
 
   const onclick = (event: Event) => {

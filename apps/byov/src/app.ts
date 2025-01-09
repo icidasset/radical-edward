@@ -12,6 +12,7 @@ import { ConnectStoracha } from './components/connect-storacha'
 import { ConnectAtProto } from './components/connect-atproto'
 import { Video } from './components/video'
 import { Channel } from './components/channel'
+import { PrfWarning } from './components/prf-warning'
 
 // 🏡
 
@@ -72,6 +73,7 @@ function AllVideos() {
  */
 function MyVideos() {
   return tags.div({}, [
+    PrfWarning(),
     tags.div(
       {
         className: 'text-center',

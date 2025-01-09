@@ -54,7 +54,9 @@ async function connect(event: Event) {
   const passkey = await Passkey.get()
 
   if (!passkey.supported) {
-    alert('Your browser does not support the PRF extension for passkeys.')
+    alert(
+      'Your browser, or authentication method, does not support the PRF extension for Passkeys.'
+    )
     return
   }
 
