@@ -49,6 +49,7 @@ export async function listVideos(): Promise<Video[]> {
   const publ = (await fs.exists(PUBLIC_VIDEO_PATH))
     ? await fs.listDirectory(PUBLIC_VIDEO_PATH)
     : []
+
   const priv = (await fs.exists(PRIVATE_VIDEO_PATH))
     ? await fs.listDirectory(PRIVATE_VIDEO_PATH)
     : []

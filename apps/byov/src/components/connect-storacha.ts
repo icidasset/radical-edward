@@ -11,9 +11,11 @@ import {
   fileSystemSetup,
   isConnectedToStoracha,
   setFileSystem,
+  setVideos,
   w3client,
 } from '../signals'
 import { reactiveElement } from '../common'
+import { listVideos } from '../videos'
 
 /**
  *
@@ -108,11 +110,13 @@ async function connect(event: Event) {
       )
 
       await FS.Keys.save({ key: capsuleKey, path: Path.root() })
-      await FS.loadPrivate({ blockstore: blockstore(), fs })
     }
 
+    await FS.loadPrivate({ blockstore: blockstore(), fs })
     setFileSystem(fs)
     await fileSystemSetup()
+    setVideos('loading')
+    setVideos(await listVideos())
   }
 
   const capsuleKey = await FS.Keys.lookup({ path: Path.root() })

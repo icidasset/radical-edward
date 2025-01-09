@@ -79,10 +79,16 @@ export { page, setPage } from './routing'
 export const [isUploading, setIsUploading] = signal(false)
 export const [videos, setVideos] = signal<'loading' | Video[]>('loading')
 
-effect(async () => {
-  setVideos('loading')
-  setVideos(await listVideos())
-})
+/**
+ *
+ */
+function loadVideos() {
+  void listVideos().then((v) => {
+    setVideos(v)
+  })
+}
+
+loadVideos()
 
 // DERIVATIVES
 
