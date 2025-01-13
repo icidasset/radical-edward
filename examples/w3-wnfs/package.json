@@ -20,7 +20,7 @@
     "@web3-storage/upload-client": "^13.1.0",
     "@web3-storage/w3up-client": "^12.5.0",
     "@wnfs-wg/nest": "^1.0.0",
-    "blockstore-core": "^4.4.0",
+    "blockstore-core": "^5.0.2",
     "blockstore-idb": "^1.1.8",
     "idb-keyval": "^6.2.1",
     "interface-blockstore": "^5.2.10",
