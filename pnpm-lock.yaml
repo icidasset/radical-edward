@@ -33,8 +33,8 @@ importers:
         specifier: ^0.7.0
         version: 0.7.0(typedoc@0.25.12(typescript@5.3.3))
       typedoc-plugin-zod:
-        specifier: ^1.1.2
-        version: 1.1.2(typedoc@0.25.12(typescript@5.3.3))
+        specifier: ^1.3.1
+        version: 1.3.1(typedoc@0.25.12(typescript@5.3.3))
       typescript:
         specifier: 5.3.3
         version: 5.3.3
@@ -2034,8 +2034,8 @@ packages:
   '@storacha/one-webcrypto@1.0.1':
     resolution: {integrity: sha512-bD+vWmcgsEBqU0Dz04BR43SA03bBoLTAY29vaKasY9Oe8cb6XIP0/vkm0OS2UwKC13c8uRgFW4rjJUgDCNLejQ==}
 
-  '@storacha/one-webcrypto@https://codeload.github.com/web3-storage/one-webcrypto/tar.gz/9e029e2fd477bd95bb80abd3553bbac704ccc7a6':
-    resolution: {tarball: https://codeload.github.com/web3-storage/one-webcrypto/tar.gz/9e029e2fd477bd95bb80abd3553bbac704ccc7a6}
+  '@storacha/one-webcrypto@git+https://git@github.com:web3-storage/one-webcrypto.git#9e029e2fd477bd95bb80abd3553bbac704ccc7a6':
+    resolution: {commit: 9e029e2fd477bd95bb80abd3553bbac704ccc7a6, repo: git@github.com:web3-storage/one-webcrypto.git, type: git}
     version: 1.0.1
 
   '@swc/helpers@0.5.15':
@@ -5675,10 +5675,10 @@ packages:
     peerDependencies:
       typedoc: 0.22.x || 0.23.x || 0.24.x || 0.25.x
 
-  typedoc-plugin-zod@1.1.2:
-    resolution: {integrity: sha512-jsmuYg1xsGjwKdhKN4tgRYORnbKpU7v5B1ZpsazMH5lUsI6ZLxBqAY5iiZ06oz/01gHOsAdhpABgWD97MOjKQA==}
+  typedoc-plugin-zod@1.3.1:
+    resolution: {integrity: sha512-u4NH1Ez168gRNnhUd0x4pZhp85maJ9y050IxSok9XwdzTpUA9NN0ee3ho8ssrzmxsvO2UDbDEiks7xtI0p6UXA==}
     peerDependencies:
-      typedoc: 0.23.x || 0.24.x || 0.25.x
+      typedoc: 0.23.x || 0.24.x || 0.25.x || 0.26.x || 0.27.x
 
   typedoc@0.25.12:
     resolution: {integrity: sha512-F+qhkK2VoTweDXd1c42GS/By2DvI2uDF4/EpG424dTexSHdtCH52C6IcAvMA6jR3DzAWZjHpUOW+E02kyPNUNw==}
@@ -7375,7 +7375,7 @@ snapshots:
 
   '@storacha/one-webcrypto@1.0.1': {}
 
-  '@storacha/one-webcrypto@https://codeload.github.com/web3-storage/one-webcrypto/tar.gz/9e029e2fd477bd95bb80abd3553bbac704ccc7a6': {}
+  '@storacha/one-webcrypto@git+https://git@github.com:web3-storage/one-webcrypto.git#9e029e2fd477bd95bb80abd3553bbac704ccc7a6': {}
 
   '@swc/helpers@0.5.15':
     dependencies:
@@ -7768,7 +7768,7 @@ snapshots:
       bigint-mod-arith: 3.3.1
       conf: 11.0.2
       multiformats: 12.1.3
-      one-webcrypto: '@storacha/one-webcrypto@https://codeload.github.com/web3-storage/one-webcrypto/tar.gz/9e029e2fd477bd95bb80abd3553bbac704ccc7a6'
+      one-webcrypto: '@storacha/one-webcrypto@git+https://git@github.com:web3-storage/one-webcrypto.git#9e029e2fd477bd95bb80abd3553bbac704ccc7a6'
       p-defer: 4.0.0
       type-fest: 4.14.0
       uint8arrays: 4.0.10
@@ -12162,7 +12162,7 @@ snapshots:
       camelcase: 8.0.0
       typedoc: 0.25.12(typescript@5.3.3)
 
-  typedoc-plugin-zod@1.1.2(typedoc@0.25.12(typescript@5.3.3)):
+  typedoc-plugin-zod@1.3.1(typedoc@0.25.12(typescript@5.3.3)):
     dependencies:
       typedoc: 0.25.12(typescript@5.3.3)
 
