@@ -20,7 +20,7 @@
     "iso-base": "^4.0.0",
     "iso-passkeys": "^0.2.2",
     "libp2p-crypto": "^0.21.2",
-    "w3name": "^1.0.8"
+    "w3name": "^1.0.9"
   },
   "devDependencies": {
     "@rsbuild/core": "^0.5.2",
